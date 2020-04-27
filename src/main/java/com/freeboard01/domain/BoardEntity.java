@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-public class boardEntity {
+public class BoardEntity {
 
     @Id
     @Setter
