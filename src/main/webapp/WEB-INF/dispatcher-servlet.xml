@@ -13,8 +13,8 @@
     <context:component-scan base-package="com.freeboard01.controller" use-default-filters="false">
         <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
     </context:component-scan>
-    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-        <property name="prefix" value="/WEB-INF/view/"></property>
-        <property name="suffix" value=".jsp"></property>
+    <bean class="com.github.jknack.handlebars.springmvc.HandlebarsViewResolver">
+        <property name="prefix" value="/WEB-INF/view/"/>
+        <property name="suffix" value=".hbs"/>
     </bean>
 </beans>

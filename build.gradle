@@ -28,6 +28,16 @@ dependencies {
     compile group: 'org.springframework', name: 'spring-webmvc', version: '5.2.5.RELEASE'
 
     /***
+     *  front template dependencies
+     */
+    // https://mvnrepository.com/artifact/com.github.jknack/handlebars
+    compile group: 'com.github.jknack', name: 'handlebars', version: '4.0.6'
+    /*// https://mvnrepository.com/artifact/com.github.jknack/handlebars-jackson2
+    compile group: 'com.github.jknack', name: 'handlebars-jackson2', version: '4.0.6'*/
+    // https://mvnrepository.com/artifact/com.github.jknack/handlebars-springmvc
+    compile group: 'com.github.jknack', name: 'handlebars-springmvc', version: '4.0.6'
+
+    /***
      * datebase dependencies
      * */
     // https://mvnrepository.com/artifact/org.springframework.data/spring-data-jpa

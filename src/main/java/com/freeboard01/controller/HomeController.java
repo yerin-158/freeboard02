@@ -8,7 +8,6 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class HomeController {
 
-
     @GetMapping("/")
     public String home(Model model) {
         model.addAttribute("msg", "Hello World!");
@@ -21,6 +20,11 @@ public class HomeController {
         modelAndView.setViewName("index");
         modelAndView.addObject("msg", "다른 페이지로 이동하였습니다!!!");
         return modelAndView;
+    }
+
+    @GetMapping("/board")
+    public String board() {
+        return "board";
     }
 
 }
