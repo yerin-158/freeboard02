@@ -8,14 +8,15 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class HomeController {
 
+
     @GetMapping("/")
-    public String home(Model model){
+    public String home(Model model) {
         model.addAttribute("msg", "Hello World!");
         return "index";
     }
 
     @GetMapping("/anotherpage")
-    public ModelAndView buttonTest(){
+    public ModelAndView buttonTest() {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("index");
         modelAndView.addObject("msg", "다른 페이지로 이동하였습니다!!!");

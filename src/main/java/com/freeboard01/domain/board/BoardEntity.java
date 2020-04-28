@@ -1,6 +1,8 @@
-package com.freeboard01.domain;
+package com.freeboard01.domain.board;
 
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -10,6 +12,8 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@Table(name = "board")
+@NoArgsConstructor
 public class BoardEntity {
 
     @Id
@@ -34,4 +38,10 @@ public class BoardEntity {
     @Column
     private String content;
 
+    @Builder
+    public BoardEntity(String user, String password, String content){
+        this.user = user;
+        this.password = password;
+        this.content = content;
+    }
 }
