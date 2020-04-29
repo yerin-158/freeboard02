@@ -1,6 +1,7 @@
 package com.freeboard01.api.board;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,16 +19,23 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/applicationContext.xml", "file:src/main/webapp/WEB-INF/dispatcher-servlet.xml"})
 @Transactional
+@WebAppConfiguration
 public class BoardApiControllerTest {
 
     @Autowired
-    private BoardApiController boardApiController;
+    private WebApplicationContext webApplicationContext;
 
     private MockMvc mvc;
 
     @BeforeEach
     public void initMvc() {
-        mvc = MockMvcBuilders.standaloneSetup(boardApiController).build();
+        mvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+    }
+
+    @Test
+    @DisplayName("trailing-slash test")
+    public void trailingSlashTest() throws Exception {
+        mvc.perform(get("/api/boards/")).andExpect(status().isOk());
     }
 
     @Test

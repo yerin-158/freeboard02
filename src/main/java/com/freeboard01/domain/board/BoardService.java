@@ -13,7 +13,7 @@ public class BoardService {
     public List<BoardEntity> get() {
         List<BoardEntity> boardEntityList = new ArrayList<>();
         for (int i = 1; i <= 5; ++i) {
-            BoardEntity boardEntity = BoardEntity.builder().user("user"+i+i+i).contents("contents"+i+i+i).password("1234").build();
+            BoardEntity boardEntity = BoardEntity.builder().user("user"+i+i+i).title("title"+i+i+i).contents("contents"+i+i+i).password("1234").build();
             boardEntityList.add(boardEntity);
         }
         return boardEntityList;

@@ -3,7 +3,6 @@ package com.freeboard01.api.board;
 import com.freeboard01.domain.board.BoardEntity;
 import com.freeboard01.domain.board.BoardService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,13 +13,10 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/boards")
+@RequiredArgsConstructor
 public class BoardApiController {
-    private final BoardService boardService;
 
-    @Autowired
-    public BoardApiController(BoardService boardService){
-        this.boardService = boardService;
-    }
+    private final BoardService boardService;
 
     @GetMapping
     public ResponseEntity<List<BoardDto>> get(){

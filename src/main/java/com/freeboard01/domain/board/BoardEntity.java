@@ -38,10 +38,14 @@ public class BoardEntity {
     @Column
     private String contents;
 
+    @Column
+    private String title;
+
     @Builder
-    public BoardEntity(String user, String password, String contents){
+    public BoardEntity(String user, String password, String contents, String title){
         this.user = user;
         this.password = password;
         this.contents = contents;
+        this.title = title;
     }
 }
