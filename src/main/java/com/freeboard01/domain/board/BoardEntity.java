@@ -36,12 +36,12 @@ public class BoardEntity {
     private String password;
 
     @Column
-    private String content;
+    private String contents;
 
     @Builder
-    public BoardEntity(String user, String password, String content){
+    public BoardEntity(String user, String password, String contents){
         this.user = user;
         this.password = password;
-        this.content = content;
+        this.contents = contents;
     }
 }

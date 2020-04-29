@@ -3,10 +3,11 @@
 {{/partial}}
 
 <!--body-->
-{{#partial "content"}}
+{{#partial "contents"}}
     <h1>이곳은 게시판입니다.</h1>
     <div id="tableSpace"></div>
     <div id="pageMarkerSpace"></div>
+    <button onclick='apiTest()' class='btn btn-primary'>API 요청 테스트</button>
     <button onclick='location.href="/freeboard01"' class='btn btn-primary'>메인으로 이동하기</button>
 {{/partial}}
 <!--body-->
@@ -42,6 +43,17 @@
             var template = Handlebars.compile($("#pageMarker").html());
             $("#pageMarkerSpace").html(template(page));
         }
+
+        var apiTest =  () => {
+            $.ajax({
+                method : 'GET',
+                url : 'api/boards'
+            }).done(function (response) {
+                console.log(response);
+            })
+        }
+
+
     </script>
 {{#block "helper"}}{{/block}}
 {{/partial}}
