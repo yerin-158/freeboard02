@@ -22,13 +22,13 @@
             totalPages: 5
         }
 
-        window.onload = function () {
+        window.onload = () => {
             apiRequest(attachBoard);
             var template = Handlebars.compile($("#pageMarker").html());
             $("#pageMarkerSpace").html(template(page));
         }
 
-        var apiRequest =  (callback = null) => {
+        var apiRequest = (callback = null) => {
             $.ajax({
                 method : 'GET',
                 url : 'api/boards'
