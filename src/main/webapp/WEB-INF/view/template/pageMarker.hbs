@@ -1,0 +1,19 @@
+<script id="pageMarker" type="text/x-handlebars-template">
+\{{#if this}}
+    <div aria-label="Page navigation example">
+        <ul class="pagination mt-3">
+            <li class="page-item \{{#if (eqw startPage 1)}}disabled\{{/if}}">
+                <a class="page-link" id='prevPageBtn' \{{#if (eqw startPage 1)}}disabled="disabled"\{{/if}} data-pagenumber='\{{startPage}}'  href="#">Previous</a>
+            </li>
+            \{{#for startPage endPage 1}}
+            <li class="page-item">
+                <a class="page-link pageBar" data-pagenumber='\{{this}}' href="#">\{{this}}</a>
+            </li>
+            \{{/for}}
+            <li class="page-item \{{#if (eqw endPage totalPages)}}disabled\{{/if}}">
+                <a class="page-link" id='nextPageBtn' \{{#if (eqw endPage totalPages)}}disabled="disabled"\{{/if}} data-pagenumber='\{{endPage}}' href="#">Next</a>
+            </li>
+        </ul>
+    </div>
+\{{/if}}
+</script>

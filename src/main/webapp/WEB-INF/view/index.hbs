@@ -1,0 +1,24 @@
+{{#partial "header"}}
+    <title>Main Page</title>
+{{/partial}}
+
+<!--body-->
+{{#partial "contents"}}
+    <h1>어서오세요. 여기는 메인 페이지입니다.</h1>
+    <h1>{{msg}}</h1>
+    <button onclick='location.href="/freeboard01/anotherpage"' class='btn btn-secondary'>페이지 이동하기</button>
+    <button onclick='location.href="/freeboard01/board"' class='btn btn-primary'>게시판으로 이동하기</button>
+{{/partial}}
+<!--body-->
+
+<!--js-->
+{{#partial "js"}}
+    <script>
+        function test() {
+            console.log("test");
+        }
+    </script>
+{{/partial}}
+<!--js-->
+
+{{> layout/layout}}

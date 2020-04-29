@@ -1,0 +1,53 @@
+{{#partial "helper"}}
+<script>
+    Handlebars.registerHelper('ifGreaterDateThanNow', function(v1, options) {
+        if(new Date(v1) > new Date()) {
+            return options.fn(this);
+        }
+        return options.inverse(this);
+    });
+
+    Handlebars.registerHelper('for', function(from, to, incr, block) {
+        var accum = '';
+        for(var i = from; i <= to; i += incr)
+            accum += block.fn(i);
+        return accum;
+    });
+
+    Handlebars.registerHelper("math", function(lvalue, operator, rvalue, options) {
+        lvalue = parseFloat(lvalue);
+        rvalue = parseFloat(rvalue);
+
+        return {
+            "+": lvalue + rvalue,
+            "-": lvalue - rvalue,
+            "*": lvalue * rvalue,
+            "/": lvalue / rvalue,
+            "%": lvalue % rvalue
+        }[operator];
+    });
+
+
+    Handlebars.registerHelper("dateFormatter", function (date, options) {
+        var convertedDate = new Date(date);
+        var month = convertedDate.getMonth()+1;
+        var date = convertedDate.getDate();
+        var hours = convertedDate.getHours();
+        var minutes = convertedDate.getMinutes();
+        if(minutes == 0) {
+            minutes = '00';
+        }
+        return month+"월"+date+"일 "+hours+":"+minutes;
+    })
+
+    Handlebars.registerHelper("timeFormatter", function (date, options) {
+        var convertedDate = new Date(date);
+        var hours = convertedDate.getHours();
+        var minutes = convertedDate.getMinutes();
+        if(minutes == 0) {
+            minutes = '00';
+        }
+        return hours+":"+minutes;
+    })
+</script>
+{{/partial}}
