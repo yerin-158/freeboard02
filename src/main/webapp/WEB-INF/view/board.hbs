@@ -7,55 +7,49 @@
     <h1>이곳은 게시판입니다.</h1>
     <div id="tableSpace"></div>
     <div id="pageMarkerSpace"></div>
-    <button onclick='apiTest()' class='btn btn-primary'>API 요청 테스트</button>
     <button onclick='location.href="/freeboard01"' class='btn btn-primary'>메인으로 이동하기</button>
 {{/partial}}
 <!--body-->
 
 <!--js-->
 {{#partial "js"}}
-{{> template/table}}
-{{> template/pageMarker}}
+    {{> template/table}}
+    {{> template/pageMarker}}
     <script>
-        var data = {
-            contents : [
-                { user : "user1", title : "제목입니다." },
-                { user : "user2", title : "안녕하세요." },
-                { user : "user3", title : "테이블 완성~!" }
-            ]
-        };
-
         var page = {
             startPage : 1,
             endPage: 5,
             totalPages: 5
         }
 
-        window.onload = function () {
-            debugger;
+        window.onload = () => {
+            apiRequest(attachBoard);
+            var template = Handlebars.compile($("#pageMarker").html());
+            $("#pageMarkerSpace").html(template(page));
+        }
+
+        var apiRequest = (callback = null) => {
+            $.ajax({
+                method : 'GET',
+                url : 'api/boards'
+            }).done(function (response) {
+                if(typeof callback != 'undefined'){
+                    callback(response);
+                }
+            })
+        }
+
+        var attachBoard = (response) => {
+            var data = { contents : response }
             var template = Handlebars.compile($("#tableList").html());
             if(typeof data === 'undefined') {
                 $("#tableSpace").html(template());
             }else{
                 $("#tableSpace").html(template(data));
             }
-
-            var template = Handlebars.compile($("#pageMarker").html());
-            $("#pageMarkerSpace").html(template(page));
         }
-
-        var apiTest =  () => {
-            $.ajax({
-                method : 'GET',
-                url : 'api/boards'
-            }).done(function (response) {
-                console.log(response);
-            })
-        }
-
-
     </script>
-{{#block "helper"}}{{/block}}
+    {{#block "helper"}}{{/block}}
 {{/partial}}
 <!--js-->
 {{> static/helper/helper}}
