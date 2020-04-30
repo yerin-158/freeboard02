@@ -16,22 +16,15 @@
     {{> template/table}}
     {{> template/pageMarker}}
     <script>
-        var page = {
-            startPage : 1,
-            endPage: 5,
-            totalPages: 5
-        }
-
         window.onload = () => {
             apiRequest(attachBoard);
-            var template = Handlebars.compile($("#pageMarker").html());
-            $("#pageMarkerSpace").html(template(page));
         }
 
-        var apiRequest = (callback = null) => {
+        var apiRequest = (callback = null, page = 1) => {
+            const SIZE = 10;
             $.ajax({
                 method : 'GET',
-                url : 'api/boards'
+                url : 'api/boards?page='+page+"&size="+SIZE
             }).done(function (response) {
                 if(typeof callback != 'undefined'){
                     callback(response);
@@ -40,13 +33,16 @@
         }
 
         var attachBoard = (response) => {
-            var data = { contents : response }
-            var template = Handlebars.compile($("#tableList").html());
-            if(typeof data === 'undefined') {
-                $("#tableSpace").html(template());
-            }else{
-                $("#tableSpace").html(template(data));
+            if(typeof response != 'undefined') {
+                var template = Handlebars.compile($("#tableList").html());
+                $("#tableSpace").html(template(response));
+                var template = Handlebars.compile($("#pageMarker").html());
+                $("#pageMarkerSpace").html(template(response));
             }
+        }
+
+        var pageConvert = (page) => {
+            apiRequest(attachBoard, page);
         }
     </script>
     {{#block "helper"}}{{/block}}

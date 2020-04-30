@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Getter
-public class BoardDto {
+public class BoardDto{
 
     private String user;
     private String password;

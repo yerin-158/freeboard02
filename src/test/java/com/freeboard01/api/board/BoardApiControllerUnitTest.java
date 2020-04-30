@@ -4,6 +4,7 @@ package com.freeboard01.api.board;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +24,7 @@ public class BoardApiControllerUnitTest {
 
     @Test
     public void getTest(){
-        List<BoardDto> list = sut.get().getBody();
+        List<BoardDto> list = sut.get(PageRequest.of(0,10)).getBody();
         assertThat(list.size(), equalTo(5));
     }
 }

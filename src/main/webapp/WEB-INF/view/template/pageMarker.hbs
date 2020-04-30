@@ -7,7 +7,7 @@
             </li>
             \{{#for startPage endPage 1}}
             <li class="page-item">
-                <a class="page-link pageBar" data-pagenumber='\{{this}}' href="#">\{{this}}</a>
+                <a class="page-link pageBar" data-pagenumber='\{{this}}' onclick="pageConvert(\{{this}})">\{{this}}</a>
             </li>
             \{{/for}}
             <li class="page-item \{{#if (eqw endPage totalPages)}}disabled\{{/if}}">
