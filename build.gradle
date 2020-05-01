@@ -18,6 +18,8 @@ dependencies {
      * */
     // https://mvnrepository.com/artifact/org.springframework/spring-test
     testCompile group: 'org.springframework', name: 'spring-test', version: '5.2.5.RELEASE'
+    // https://mvnrepository.com/artifact/org.skyscreamer/jsonassert
+    testCompile group: 'org.skyscreamer', name: 'jsonassert', version: '1.5.0'
     // https://mvnrepository.com/artifact/org.mockito/mockito-core
     testCompile group: 'org.mockito', name: 'mockito-core', version: '3.1.0'
     // https://mvnrepository.com/artifact/org.mockito/mockito-junit-jupiter

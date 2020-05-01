@@ -18,4 +18,8 @@ public class BoardService {
     public Page<BoardEntity> get(Pageable pageable) {
         return boardRepository.findAll(PageUtil.convertToZeroBasePageWithSort(pageable));
     }
+
+    public BoardEntity post(BoardEntity entity){
+        return boardRepository.save(entity);
+    }
 }
