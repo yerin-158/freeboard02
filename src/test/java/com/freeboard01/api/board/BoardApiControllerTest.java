@@ -76,7 +76,7 @@ public class BoardApiControllerTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(updateForm)))
                 .andExpect(status().isOk())
-                .andExpect(content().json("{'contents':'"+updateForm.getContents()+"'}"));
+                .andExpect(content().string("true"));
     }
 
     @Test
