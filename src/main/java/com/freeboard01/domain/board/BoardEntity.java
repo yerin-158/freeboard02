@@ -1,5 +1,6 @@
 package com.freeboard01.domain.board;
 
+import com.freeboard01.api.board.BoardForm;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
