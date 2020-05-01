@@ -75,7 +75,28 @@ public class BoardApiControllerTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(updateForm)))
                 .andExpect(status().isOk())
-                .andExpect(content().json("{'contents':'"+updateForm.getContents()+"'}"));;
+                .andExpect(content().json("{'contents':'"+updateForm.getContents()+"'}"));
     }
+
+    @Test
+    @DisplayName("잘못된 패스워드를 입력한 경우 데이터는 삭제되지 않고 false를 반환한다.")
+    public void deleteTest1() throws Exception {
+        BoardEntity entity = boardRepository.findAll().get(0);
+
+        mvc.perform(delete("/api/boards/"+entity.getId()+"?password=wrongPass"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("false"));
+    }
+
+    @Test
+    @DisplayName("올바른 패스워드를 입력한 경우 데이터를 삭제하고 true를 반환한다.")
+    public void deleteTest2() throws Exception {
+        BoardEntity entity = boardRepository.findAll().get(0);
+
+        mvc.perform(delete("/api/boards/"+entity.getId()+"?password="+entity.getPassword()))
+                .andExpect(status().isOk())
+                .andExpect(content().string("true"));
+    }
+
 
 }

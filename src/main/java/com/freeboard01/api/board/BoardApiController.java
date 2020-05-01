@@ -39,4 +39,9 @@ public class BoardApiController {
         BoardEntity updatedEntity = boardService.update(form.convertBoardEntity(), id);
         return ResponseEntity.ok(BoardDto.of(updatedEntity));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Boolean> delete(@PathVariable long id, @RequestParam String password){
+        return ResponseEntity.ok(boardService.delete(id, password));
+    }
 }
