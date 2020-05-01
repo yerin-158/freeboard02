@@ -54,7 +54,7 @@ public class BoardApiControllerTest {
 
         mvc.perform(post("/api/boards")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .content((objectMapper.writeValueAsString(boardForm))))
+                        .content(objectMapper.writeValueAsString(boardForm)))
                 .andExpect(status().isOk())
                 .andExpect(content().json("{'contents':'"+boardForm.getContents()+"'}"));;
     }
