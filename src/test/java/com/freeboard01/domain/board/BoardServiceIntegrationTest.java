@@ -8,41 +8,28 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/applicationContext.xml"})
 @Transactional
 @Rollback(value = false)
-public class boardRepositoryIntegrationTest {
+public class BoardServiceIntegrationTest {
 
     @Autowired
-    private BoardRepository sut = null;
+    private BoardService sut;
 
     @Test
-    public void test1() {
-        List<BoardEntity> boardEntityList = new ArrayList<>();
-        for (int i = 0; i < 30; ++i) {
-            BoardEntity entity = BoardEntity.builder().user("myNameis" + i).title("제목입니다." + i + i + i).password("1234").contents("test data~" + i).build();
-            boardEntityList.add(entity);
-        }
-        sut.saveAll(boardEntityList);
-    }
-
-    @Test
-    public void updateTest(){
+    public void update() {
         BoardEntity saveEntity = BoardEntity.builder().user("유저").title("제목입니다^^*").contents("오늘은 날씨가 좋네요").password("123!@#").build();
-        sut.save(saveEntity);
+        BoardEntity updatedEntity = BoardEntity.builder().user("유저").title("수정 후 제목입니다^^*").contents("수정후 내용이에요~ 날씨가 좋네요").password("123!@#").build();
 
-        String updateContents = "수정된 데이터입니다.";
-        saveEntity.setContents(updateContents);
-        BoardEntity updatedEntity = sut.findById(saveEntity.getId()).get();
-        assertThat(updatedEntity.getContents(), equalTo(updateContents));
+        sut.post(saveEntity);
+        sut.update(updatedEntity, saveEntity.getId());
+
+        assertThat(saveEntity.getContents(), equalTo(updatedEntity.getContents()));
+        assertThat(saveEntity.getTitle(), equalTo(updatedEntity.getTitle()));
     }
-
 }

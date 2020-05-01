@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 @Getter
 @Table(name = "board")
 @NoArgsConstructor
+@DynamicUpdate
 public class BoardEntity {
 
     @Id
@@ -36,6 +38,7 @@ public class BoardEntity {
     @Column
     private String password;
 
+    @Setter
     @Column
     private String contents;
 
@@ -48,5 +51,13 @@ public class BoardEntity {
         this.password = password;
         this.contents = contents;
         this.title = title;
+    }
+
+    public BoardEntity update(BoardEntity newBoard){
+        this.user = newBoard.getUser();
+        this.password = newBoard.getPassword();
+        this.contents = newBoard.getContents();
+        this.title = newBoard.getTitle();
+        return this;
     }
 }
