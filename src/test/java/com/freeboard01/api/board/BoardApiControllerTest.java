@@ -66,16 +66,17 @@ public class BoardApiControllerTest {
     }
 
     @Test
+    @DisplayName("올바른 패스워드를 입력한 경우 데이터 수정이 가능하다.")
     public void updateTest() throws Exception {
         BoardEntity entity = boardRepository.findAll().get(0);
-        BoardForm updateForm = BoardForm.builder().user("사용자 아이디").title("제목을 입력하세요").contents("수정된 데이터입니다 ^^*").password("1234").build();
+        BoardForm updateForm = BoardForm.builder().user("사용자 아이디").title("제목을 입력하세요").contents("수정된 데이터입니다 ^^*").password(entity.getPassword()).build();
         ObjectMapper objectMapper = new ObjectMapper();
 
         mvc.perform(put("/api/boards/"+entity.getId())
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(updateForm)))
                 .andExpect(status().isOk())
-                .andExpect(content().json("{'contents':'"+updateForm.getContents()+"'}"));
+                .andExpect(content().string("true"));
     }
 
     @Test

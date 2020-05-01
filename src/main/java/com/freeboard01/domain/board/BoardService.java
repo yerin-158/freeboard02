@@ -28,9 +28,13 @@ public class BoardService {
         return boardRepository.save(entity);
     }
 
-    public BoardEntity update(BoardEntity newBoard, long id) {
+    public Boolean update(BoardEntity newBoard, long id) {
         BoardEntity prevEntity = boardRepository.findById(id).get();
-        return prevEntity.update(newBoard);
+        if(prevEntity.getPassword().equals(newBoard.getPassword())){
+            prevEntity.update(newBoard);
+            return true;
+        }
+        return false;
     }
 
     public boolean delete(long id, String password) {

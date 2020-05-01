@@ -7,6 +7,8 @@
     <h1>이곳은 게시판입니다.</h1>
     <div id="tableSpace"></div>
     <div id="pageMarkerSpace"></div>
+    <div id="writeModalSpace"></div>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#boardModal">글쓰기</button>
     <button onclick='location.href="/freeboard01"' class='btn btn-primary'>메인으로 이동하기</button>
 {{/partial}}
 <!--body-->
@@ -15,9 +17,18 @@
 {{#partial "js"}}
     {{> template/table}}
     {{> template/pageMarker}}
+    {{> template/modal}}
     <script>
+        let nowBoardList = new Object();
+        let nowBoardIndex = 0;
+        const WRITE = "Write";
+        const MODIFY = "Modify";
+
         window.onload = () => {
             apiRequest(attachBoard);
+            var template = Handlebars.compile($("#writeModal").html());
+            $("#writeModalSpace").html(template());
+            $("#writeModal").find('#deleteBtn').css('display', 'none');
         }
 
         var apiRequest = (callback = null, page = 1) => {
@@ -26,6 +37,7 @@
                 method : 'GET',
                 url : 'api/boards?page='+page+"&size="+SIZE
             }).done(function (response) {
+                nowBoardList = response.contents;
                 if(typeof callback != 'undefined'){
                     callback(response);
                 }
@@ -44,6 +56,106 @@
         var pageConvert = (page) => {
             apiRequest(attachBoard, page);
         }
+
+        var fetchDetails = (index) => {
+            nowBoardIndex = index;
+            setModalData(index);
+            setModifyModal();
+            $('#boardModal').modal("show");
+        }
+
+        var setModalData = (index) => {
+            var $modal = $('#boardModal');
+            $modal.find('#user').val(nowBoardList[index].user);
+            $modal.find('#title').val(nowBoardList[index].title);
+            $modal.find('#contents').val(nowBoardList[index].contents);
+            $modal.find('#password').val("");
+        }
+
+        var setModifyModal = () => {
+            var $modal = $('#boardModal');
+            $modal.find('#saveBtn').text(MODIFY);
+            $modal.find('#user').attr('disabled', true);
+            $modal.find('#deleteBtn').css('display', 'block');
+        }
+
+        var resetModalData = () => {
+            var $modal = $('#boardModal');
+            $modal.find('#user').val("");
+            $modal.find('#title').val("");
+            $modal.find('#contents').val("");
+            $modal.find('#password').val("");
+        }
+
+        var setNewWriteModal = () => {
+            var $modal = $('#boardModal');
+            $modal.find('#saveBtn').text(WRITE);
+            $modal.find('#user').attr('disabled', false);
+            $modal.find('#deleteBtn').css('display', 'none');
+        }
+
+        var setBoardForm = () => {
+            var BoardForm = new Object();
+            var $modal = $('#boardModal');
+            BoardForm.user = $modal.find('#user').val();
+            BoardForm.title = $modal.find('#title').val();
+            BoardForm.contents = $modal.find('#contents').val();
+            BoardForm.password = $modal.find('#password').val();
+            return BoardForm;
+        }
+
+        $(document).on('show.bs.modal', '#boardModal', function (event) { // 모달 열릴 때 이벤트
+
+        })
+
+        $(document).on('hidden.bs.modal', '#boardModal', function () { // 모달 닫힐 때 이벤트
+            resetModalData();
+            setNewWriteModal();
+        })
+
+        $(document).on('click', '#deleteBtn', function() {
+            var password = $('#boardModal').find('#password').val();
+            $.ajax({
+                method : 'DELETE',
+                url : 'api/boards/'+nowBoardList[nowBoardIndex].id+'?password='+password
+            }).done(function (response) {
+                if(typeof response != 'undefined'){
+                    if(response == false) {
+                        alert(" 비밀 번호가 틀렸습니다. ");
+                    } else {
+                        $('#boardModal').modal("hide"); //닫기
+                    }
+                }
+            })
+        })
+
+        $(document).on('click', '#saveBtn', function() {
+            var BoardForm = setBoardForm();
+            var method, url;
+            if($('#saveBtn').text() === WRITE){
+                method = 'POST';
+                url = 'api/boards';
+            }else{
+                method = 'PUT';
+                url = 'api/boards/'+nowBoardList[nowBoardIndex].id;
+            }
+
+            $.ajax({
+                method : method,
+                url : url,
+                contentType: 'application/json',
+                data : JSON.stringify(BoardForm)
+            }).done(function (response) {
+                if(typeof response != 'undefined'){
+                    if(response == false){
+                        alert(" 비밀 번호가 틀렸습니다. ");
+                    }else {
+                        $('#boardModal').modal("hide"); //닫기
+                    }
+                }
+            })
+        })
+
     </script>
     {{#block "helper"}}{{/block}}
 {{/partial}}
