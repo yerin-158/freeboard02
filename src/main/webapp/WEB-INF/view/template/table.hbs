@@ -9,7 +9,7 @@
         </thead>
         <tbody>
         \{{#contents}}
-        <tr>
+        <tr onclick='fetchDetails(\{{@index}})'>
             <th scope="row">\{{math @index '+' 1}}</th>
             <td>\{{title}}</td>
             <td>\{{user}}</td>
