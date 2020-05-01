@@ -18,6 +18,7 @@
             <bean class="org.springframework.data.web.PageableHandlerMethodArgumentResolver"/>
         </mvc:argument-resolvers>
     </mvc:annotation-driven>
+
     <context:component-scan base-package="com.freeboard01.controller" use-default-filters="false">
         <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
     </context:component-scan>

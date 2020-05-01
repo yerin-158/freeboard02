@@ -9,8 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
-@Transactional
 @RequiredArgsConstructor
+@Transactional
 public class BoardService {
 
     private final BoardRepository boardRepository;
@@ -21,5 +21,10 @@ public class BoardService {
 
     public BoardEntity post(BoardEntity entity){
         return boardRepository.save(entity);
+    }
+
+    public BoardEntity update(BoardEntity newBoard, long id) {
+        BoardEntity prevEntity = boardRepository.findById(id).get();
+        return prevEntity.update(newBoard);
     }
 }

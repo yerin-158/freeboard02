@@ -33,4 +33,10 @@ public class BoardApiController {
         BoardEntity savedEntity = boardService.post(form.convertBoardEntity());
         return ResponseEntity.ok(BoardDto.of(savedEntity));
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<BoardDto> update(@RequestBody BoardForm form, @PathVariable long id){
+        BoardEntity updatedEntity = boardService.update(form.convertBoardEntity(), id);
+        return ResponseEntity.ok(BoardDto.of(updatedEntity));
+    }
 }
