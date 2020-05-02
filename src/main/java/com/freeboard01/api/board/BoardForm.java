@@ -1,6 +1,7 @@
 package com.freeboard01.api.board;
 
 import com.freeboard01.domain.board.BoardEntity;
+import com.freeboard01.domain.user.UserEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,23 +10,20 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class BoardForm {
 
-    private String user;
     private String password;
     private String contents;
     private String title;
 
     @Builder
-    public BoardForm(String user, String password, String contents, String title){
-        this.user = user;
+    public BoardForm(String password, String contents, String title){
         this.password = password;
         this.contents = contents;
         this.title = title;
     }
 
-    public BoardEntity convertBoardEntity(){
+    public BoardEntity convertBoardEntity(UserEntity user){
         return BoardEntity.builder()
-                .user(this.user)
-                .password(this.password)
+                .writer(user)
                 .contents(this.contents)
                 .title(this.title)
                 .build();
