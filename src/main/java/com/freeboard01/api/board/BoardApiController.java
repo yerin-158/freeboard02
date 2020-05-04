@@ -1,8 +1,10 @@
 package com.freeboard01.api.board;
 
 import com.freeboard01.api.PageDto;
+import com.freeboard01.api.user.UserForm;
 import com.freeboard01.domain.board.BoardEntity;
 import com.freeboard01.domain.board.BoardService;
+import com.freeboard01.domain.user.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,6 +13,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,6 +22,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class BoardApiController {
 
+    private final HttpSession httpSession;
     private final BoardService boardService;
 
     @GetMapping
@@ -30,17 +34,26 @@ public class BoardApiController {
 
     @PostMapping
     public ResponseEntity<BoardDto> post(@RequestBody BoardForm form){
-        BoardEntity savedEntity = boardService.post(form.convertBoardEntity());
+        if(httpSession.getAttribute("USER") == null){
+            new Exception();
+        }
+        BoardEntity savedEntity = boardService.post(form, (UserForm) httpSession.getAttribute("USER"));
         return ResponseEntity.ok(BoardDto.of(savedEntity));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Boolean> update(@RequestBody BoardForm form, @PathVariable long id){
-        return ResponseEntity.ok(boardService.update(form.convertBoardEntity(), id));
+        if(httpSession.getAttribute("USER") == null){
+            new Exception();
+        }
+        return ResponseEntity.ok(boardService.update(form, (UserForm) httpSession.getAttribute("USER"), id));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Boolean> delete(@PathVariable long id, @RequestParam String password){
-        return ResponseEntity.ok(boardService.delete(id, password));
+    public ResponseEntity<Boolean> delete(@PathVariable long id){
+        if(httpSession.getAttribute("USER") == null){
+            new Exception();
+        }
+        return ResponseEntity.ok(boardService.delete(id, (UserForm) httpSession.getAttribute("USER")));
     }
 }

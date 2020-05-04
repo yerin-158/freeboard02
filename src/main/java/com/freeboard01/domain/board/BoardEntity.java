@@ -1,42 +1,25 @@
 package com.freeboard01.domain.board;
 
-import com.freeboard01.api.board.BoardForm;
+import com.freeboard01.domain.BaseEntity;
+import com.freeboard01.domain.user.UserEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Table(name = "board")
 @NoArgsConstructor
 @DynamicUpdate
-public class BoardEntity {
+public class BoardEntity extends BaseEntity {
 
-    @Id
-    @Setter
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-
-    @CreationTimestamp
-    @Column
-    private LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    @Column
-    private LocalDateTime updatedAt;
-
-    @Column
-    private String user;
-
-    @Column
-    private String password;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "writerId", nullable = false)
+    private UserEntity writer;
 
     @Setter
     @Column
@@ -46,16 +29,14 @@ public class BoardEntity {
     private String title;
 
     @Builder
-    public BoardEntity(String user, String password, String contents, String title){
-        this.user = user;
-        this.password = password;
+    public BoardEntity(UserEntity writer, String contents, String title){
+        this.writer = writer;
         this.contents = contents;
         this.title = title;
     }
 
     public BoardEntity update(BoardEntity newBoard){
-        this.user = newBoard.getUser();
-        this.password = newBoard.getPassword();
+        this.writer = newBoard.getWriter();
         this.contents = newBoard.getContents();
         this.title = newBoard.getTitle();
         return this;

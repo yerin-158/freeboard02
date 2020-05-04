@@ -1,5 +1,8 @@
 package com.freeboard01.domain.board;
 
+import com.freeboard01.api.board.BoardForm;
+import com.freeboard01.api.user.UserForm;
+import com.freeboard01.domain.user.UserEntity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,16 +23,18 @@ public class BoardServiceIntegrationTest {
 
     @Autowired
     private BoardService sut;
-
+/*
     @Test
     public void update() {
-        BoardEntity saveEntity = BoardEntity.builder().user("유저").title("제목입니다^^*").contents("오늘은 날씨가 좋네요").password("123!@#").build();
-        BoardEntity updatedEntity = BoardEntity.builder().user("유저").title("수정 후 제목입니다^^*").contents("수정후 내용이에요~ 날씨가 좋네요").password("123!@#").build();
+        UserForm userForm = UserForm.builder().accountId("yerin").password("pass123").build();
+        UserEntity userEntity = userForm.convertUserEntity();
+        BoardForm boardForm = BoardForm.builder().title("제목입니다^^*").contents("오늘은 날씨가 좋네요").password("123!@#").build();
+        BoardEntity updatedEntity = BoardEntity.builder().title("수정 후 제목입니다^^*").contents("수정후 내용이에요~ 날씨가 좋네요").password("123!@#").build();
 
-        sut.post(saveEntity);
-        sut.update(updatedEntity, saveEntity.getId());
+        BoardEntity entity = sut.post(boardForm, userForm);
+        sut.update(updatedEntity, entity.getId());
 
-        assertThat(saveEntity.getContents(), equalTo(updatedEntity.getContents()));
-        assertThat(saveEntity.getTitle(), equalTo(updatedEntity.getTitle()));
-    }
+        assertThat(boardForm.getContents(), equalTo(updatedEntity.getContents()));
+        assertThat(boardForm.getTitle(), equalTo(updatedEntity.getTitle()));
+    }*/
 }

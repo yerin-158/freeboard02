@@ -1,5 +1,6 @@
 package com.freeboard01.api.board;
 
+import com.freeboard01.api.user.UserDto;
 import com.freeboard01.domain.board.BoardEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,15 +10,13 @@ import lombok.NoArgsConstructor;
 public class BoardDto{
 
     private long id;
-    private String user;
-    private String password;
+    private UserDto writer;
     private String contents;
     private String title;
 
     public BoardDto(BoardEntity board) {
+        this.writer = UserDto.of(board.getWriter());
         this.id = board.getId();
-        this.user = board.getUser();
-        this.password = board.getPassword();
         this.contents = board.getContents();
         this.title = board.getTitle();
     }
