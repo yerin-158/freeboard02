@@ -22,11 +22,10 @@ public class UserApiController {
 
     @PostMapping(params = {"type=LOGIN"})
     private ResponseEntity<Boolean> login(@RequestBody UserForm user){
-        return ResponseEntity.ok(userService.login(user, httpSession));
-    }
-
-    @GetMapping(params = {"type=LOGOUT"})
-    private void logout(){
-        userService.logout(httpSession);
+        if(userService.login(user) == true){
+            httpSession.setAttribute("USER", user);
+            return ResponseEntity.ok(true);
+        }
+        return ResponseEntity.ok(false);
     }
 }

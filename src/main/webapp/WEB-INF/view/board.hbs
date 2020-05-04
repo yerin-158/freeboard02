@@ -5,12 +5,15 @@
 <!--body-->
 {{#partial "contents"}}
     <h1>이곳은 게시판입니다.</h1>
-    <div>로그인한 계정 : {{accountId}}</div>
+    {{#if accountId}}
+    <div>로그인한 계정 : {{accountId}} <button onclick='location.href="logout"' class='btn btn-primary'>로그아웃</button></div>
+    {{/if}}
     <div id="tableSpace"></div>
     <div id="pageMarkerSpace"></div>
     <div id="writeModalSpace"></div>
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#boardModal">글쓰기</button>
-    <button onclick='location.href="/freeboard01"' class='btn btn-primary'>메인으로 이동하기</button>
+    {{#if accountId}}
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#boardModal">글쓰기</button>
+    {{/if}}
 {{/partial}}
 <!--body-->
 
