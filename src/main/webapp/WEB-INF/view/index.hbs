@@ -4,21 +4,47 @@
 
 <!--body-->
 {{#partial "contents"}}
-    <h1>어서오세요. 여기는 메인 페이지입니다.</h1>
-    <h1>{{msg}}</h1>
+    <h1>어서오세요. 로그인을 해주세요.</h1>
+    <form id="loginForm" style="width: 30% !important;">
+        <div class="form-group">
+            <label for="recipient-name" class="col-form-label">Id:</label>
+            <input type="text" class="form-control" id="accountId" required>
+        </div>
+        <div class="form-group">
+            <label for="recipient-name" class="col-form-label">Password:</label>
+            <input type="password" class="form-control" id="accountPassword" required>
+        </div>
+    </form>
     <button onclick='location.href="/freeboard01/anotherpage"' class='btn btn-secondary'>페이지 이동하기</button>
     <button onclick='location.href="/freeboard01/board"' class='btn btn-primary'>게시판으로 이동하기</button>
+    <button onclick='login()' class='btn btn-primary'>로그인하기</button>
 {{/partial}}
 <!--body-->
 
 <!--js-->
 {{#partial "js"}}
-    <script>
-        function test() {
-            console.log("test");
-        }
-    </script>
 {{/partial}}
+<script>
+    var login = () => {
+        let account = new Object();
+        var $loginForm = $('#loginForm');
+        account.accountId = $loginForm.find('#accountId').val();
+        account.password = $loginForm.find('#accountPassword').val();
+
+        $.ajax({
+            method : 'POST',
+            url : 'api/users?type=LOGIN',
+            contentType: 'application/json',
+            data : JSON.stringify(account)
+        }).done(function (response) {
+            if(response == true) {
+                location.href="/freeboard01/board";
+            } else {
+                alert("로그인 정보가 바르지 않습니다.");
+            }
+        });
+    }
+</script>
 <!--js-->
 
 {{> layout/layout}}
