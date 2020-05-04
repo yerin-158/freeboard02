@@ -27,16 +27,9 @@ public class UserService {
         return false;
     }
 
-    public Boolean login(UserForm user, HttpSession httpSession) {
+    public Boolean login(UserForm user) {
         UserEntity userEntity = userRepository.findByAccountId(user.getAccountId());
-        if(userEntity.getPassword().equals(user.getPassword())){
-            httpSession.setAttribute("USER", user);
-            return true;
-        }
-        return false;
+        return userEntity != null && userEntity.getPassword().equals(user.getPassword());
     }
 
-    public void logout(HttpSession httpSession){
-        httpSession.removeAttribute("USER");
-    }
 }

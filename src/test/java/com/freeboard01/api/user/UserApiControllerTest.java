@@ -112,18 +112,7 @@ public class UserApiControllerTest {
                 .andExpect(content().string("false"));
     }
 
-    @Test
-    @DisplayName("로그아웃과 동시 세션이 지워진다.")
-    public void logoutTest1() throws Exception {
-        UserEntity userEntity = userRepository.findAll().get(0);
-        UserForm userForm = UserForm.builder().accountId(userEntity.getAccountId()).password(userEntity.getPassword()).build();
-        MockHttpSession mockHttpSession = new MockHttpSession();
-        mockHttpSession.setAttribute("USER", userForm);
 
-        mvc.perform(get("/api/users?type=LOGOUT").session(mockHttpSession))
-                .andExpect(request().sessionAttribute("USER", nullValue()))
-                .andExpect(status().isOk());
-    }
 
 }
 
