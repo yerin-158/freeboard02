@@ -25,14 +25,18 @@
     <script>
         let nowBoardList = new Object();
         let nowBoardIndex = 0;
+        let accountId = '{{accountId}}';
         const WRITE = "Write";
         const MODIFY = "Modify";
 
         window.onload = () => {
             apiRequest(attachBoard);
+            attachWriteModal();
+        }
+
+        var attachWriteModal = () => {
             var template = Handlebars.compile($("#writeModal").html());
-            $("#writeModalSpace").html(template());
-            $("#writeModal").find('#deleteBtn').css('display', 'none');
+            $("#writeModalSpace").html(template(accountId));
         }
 
         var apiRequest = (callback = null, page = 1) => {
@@ -70,42 +74,64 @@
 
         var setModalData = (index) => {
             var $modal = $('#boardModal');
-            $modal.find('#user').val(nowBoardList[index].user);
+            $modal.find('#user').val(nowBoardList[index].writer.accountId);
             $modal.find('#title').val(nowBoardList[index].title);
             $modal.find('#contents').val(nowBoardList[index].contents);
-            $modal.find('#password').val("");
         }
 
         var setModifyModal = () => {
             var $modal = $('#boardModal');
             $modal.find('#saveBtn').text(MODIFY);
-            $modal.find('#user').attr('disabled', true);
-            $modal.find('#deleteBtn').css('display', 'block');
+            if($modal.find('#user').val() === accountId){
+                $modal.find('#deleteBtn').css('display', 'block');
+            }else{
+                setDisableContents($modal);
+            }
+        }
+
+        var setDisableContents = ($modal) => {
+            $modal.find('#title').attr('disabled', true);
+            $modal.find('#contents').attr('disabled', true);
+            $modal.find('#saveBtn').css('display','none');
+        }
+
+        var setAbleContents = ($modal) => {
+            $modal.find('#title').attr('disabled', false);
+            $modal.find('#contents').attr('disabled', false);
+            $modal.find('#saveBtn').css('display', 'block');
         }
 
         var resetModalData = () => {
             var $modal = $('#boardModal');
-            $modal.find('#user').val("");
+            $modal.find('#user').val(accountId);
             $modal.find('#title').val("");
             $modal.find('#contents').val("");
-            $modal.find('#password').val("");
         }
 
         var setNewWriteModal = () => {
             var $modal = $('#boardModal');
             $modal.find('#saveBtn').text(WRITE);
-            $modal.find('#user').attr('disabled', false);
             $modal.find('#deleteBtn').css('display', 'none');
+            setAbleContents($modal);
         }
 
         var setBoardForm = () => {
-            var BoardForm = new Object();
+            var boardForm = new Object();
             var $modal = $('#boardModal');
-            BoardForm.user = $modal.find('#user').val();
-            BoardForm.title = $modal.find('#title').val();
-            BoardForm.contents = $modal.find('#contents').val();
-            BoardForm.password = $modal.find('#password').val();
-            return BoardForm;
+            boardForm.title = $modal.find('#title').val();
+            boardForm.contents = $modal.find('#contents').val();
+            return boardForm;
+        }
+
+        var requiredInputHaveNullSpec = (boardForm) => {
+            var spec = false;
+            $.each(boardForm, function (attribute, value) {
+                if(value == null || value.trim() == ""){
+                    spec = true;
+                    return false;
+                }
+            })
+            return spec;
         }
 
         $(document).on('show.bs.modal', '#boardModal', function (event) { // 모달 열릴 때 이벤트
@@ -134,7 +160,11 @@
         })
 
         $(document).on('click', '#saveBtn', function() {
-            var BoardForm = setBoardForm();
+            $('#requiredBtn').click();
+            var boardForm = setBoardForm();
+            if(requiredInputHaveNullSpec(boardForm) == true){
+                return false;
+            }
             var method, url;
             if($('#saveBtn').text() === WRITE){
                 method = 'POST';
@@ -148,7 +178,7 @@
                 method : method,
                 url : url,
                 contentType: 'application/json',
-                data : JSON.stringify(BoardForm)
+                data : JSON.stringify(boardForm)
             }).done(function (response) {
                 if(typeof response != 'undefined'){
                     if(response == false){
