@@ -3,7 +3,6 @@ package com.freeboard01.domain.board;
 import com.freeboard01.api.user.UserForm;
 import com.freeboard01.domain.user.UserEntity;
 import com.freeboard01.domain.user.UserRepository;
-import com.freeboard01.domain.user.enums.UserRole;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,50 +32,37 @@ public class BoardServiceUnitTest {
     private UserRepository mockUserRepo;
 
     @Test
-    @DisplayName("로그인한 유저와 글을 작성한 유저가 다를 경우 삭제를 진행하지 않는다.")
+    @DisplayName("잘못된 비밀번호를 입력한 경우에는 삭제를 수행하지 않는다.")
     public void delete1() {
-        UserEntity writer = UserEntity.builder().accountId("mockUser").password("mockPass").build();
-        UserForm userLoggedIn = UserForm.builder().accountId("wrongUser").password("wrongUser").build();
-        BoardEntity boardEntity = BoardEntity.builder().contents("contents").title("title").writer(writer).build();
+        final Long ID = 999L;
 
-        given(mockUserRepo.findByAccountId(anyString())).willReturn(userLoggedIn.convertUserEntity());
+        UserEntity userEntity = UserEntity.builder().accountId("mockUser").password("mockPass").build();
+        UserForm wrongUserForm = UserForm.builder().accountId("mockUser").password("wrongUser").build();
+        BoardEntity boardEntity = BoardEntity.builder().contents("contents").title("title").writer(userEntity).build();
+        boardEntity.setId(ID);
+
         given(mockBoardRepo.findById(anyLong())).willReturn(Optional.of(boardEntity));
 
-        sut.delete(anyLong(), userLoggedIn);
+        sut.delete(ID, wrongUserForm);
         verify(mockBoardRepo, never()).deleteById(anyLong());
     }
 
     @Test
-    @DisplayName("로그인한 유저와 글을 작성한 유저가 동일할 경우 삭제를 수행한다.")
+    @DisplayName("올바른 비밀번호를 입력한 경우 삭제를 수행한다.")
     public void delete2() {
+        final Long ID = 999L;
         final String PASSWORD = "myPass";
 
+        UserEntity userEntity = UserEntity.builder().accountId("mockUser").password(PASSWORD).build();
         UserForm userForm = UserForm.builder().accountId("mockUser").password(PASSWORD).build();
-        UserEntity userLoggedIn = userForm.convertUserEntity();
-        BoardEntity boardEntity = BoardEntity.builder().writer(userLoggedIn).contents("contents").title("title").build();
+        BoardEntity entity = BoardEntity.builder().writer(userEntity).contents("contents").title("title").build();
+        entity.setId(ID);
 
-        given(mockUserRepo.findByAccountId(anyString())).willReturn(userLoggedIn);
-        given(mockBoardRepo.findById(anyLong())).willReturn(Optional.of(boardEntity));
+        given(mockUserRepo.findByAccountId(anyString())).willReturn(userEntity);
+        given(mockBoardRepo.findById(anyLong())).willReturn(Optional.of(entity));
         doNothing().when(mockBoardRepo).deleteById(anyLong());
 
-        sut.delete(anyLong(), userForm);
-        verify(mockBoardRepo, times(1)).deleteById(anyLong());
-    }
-
-    @Test
-    @DisplayName("관리자 계정일 경우 삭제를 수행한다.")
-    public void delete3() {
-        UserForm userLoggedIn = UserForm.builder().accountId("admin").build();
-        UserEntity userLoggedInEntity = userLoggedIn.convertUserEntity();
-        userLoggedInEntity.setRole(UserRole.ADMIN);
-        UserEntity writer = UserEntity.builder().accountId("mockUser").password("mockPass").build();
-
-        BoardEntity boardEntity = BoardEntity.builder().writer(writer).contents("contents").title("title").build();
-
-        given(mockUserRepo.findByAccountId(anyString())).willReturn(userLoggedInEntity);
-        given(mockBoardRepo.findById(anyLong())).willReturn(Optional.of(boardEntity));
-
-        sut.delete(anyLong(), userLoggedIn);
+        sut.delete(ID, userForm);
         verify(mockBoardRepo, times(1)).deleteById(anyLong());
     }
 
