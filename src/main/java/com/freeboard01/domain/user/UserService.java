@@ -19,6 +19,10 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
+    public UserRole findUserRole(UserForm user){
+        return userRepository.findByAccountId(user.getAccountId()).getRole();
+    }
+
     public Boolean join(UserForm user) {
         UserEntity userEntity = userRepository.findByAccountId(user.getAccountId());
         if (userEntity == null) {
