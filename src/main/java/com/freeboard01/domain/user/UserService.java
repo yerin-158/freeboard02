@@ -15,13 +15,13 @@ public class UserService {
     private UserRepository userRepository;
 
     @Autowired
-    public  UserService(UserRepository userRepository){
+    public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
     public Boolean join(UserForm user) {
         UserEntity userEntity = userRepository.findByAccountId(user.getAccountId());
-        if(userEntity == null){
+        if (userEntity == null) {
             UserEntity newUser = user.convertUserEntity();
             newUser.setRole(UserRole.NORMAL);
             userRepository.save(newUser);
