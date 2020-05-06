@@ -14,7 +14,7 @@ public class IsHaveAdminRoles {
         upperRoleList = Arrays.asList(UserRole.ADMIN);
     }
 
-    public static boolean confirm(UserEntity user){
+    public static boolean confirm(UserEntity user) {
         return upperRoleList.stream().anyMatch(role -> role.equals(user.getRole()));
     }
 }
