@@ -1,7 +1,10 @@
 package com.freeboard01.domain.user;
 
+import com.freeboard01.api.Response;
 import com.freeboard01.api.user.UserForm;
+import com.freeboard01.domain.user.enums.UserExceptionType;
 import com.freeboard01.domain.user.enums.UserRole;
+import com.freeboard01.util.exception.FreeBoardException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,15 +26,14 @@ public class UserService {
         return userRepository.findByAccountId(user.getAccountId()).getRole();
     }
 
-    public Boolean join(UserForm user) {
+    public void join(UserForm user) {
         UserEntity userEntity = userRepository.findByAccountId(user.getAccountId());
-        if (userEntity == null) {
-            UserEntity newUser = user.convertUserEntity();
-            newUser.setRole(UserRole.NORMAL);
-            userRepository.save(newUser);
-            return true;
+        if (userEntity != null){
+            throw new FreeBoardException(UserExceptionType.DUPLICATED_USER);
         }
-        return false;
+        UserEntity newUser = user.convertUserEntity();
+        newUser.setRole(UserRole.NORMAL);
+        userRepository.save(newUser);
     }
 
     public Boolean login(UserForm user) {

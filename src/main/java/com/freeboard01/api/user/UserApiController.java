@@ -1,6 +1,8 @@
 package com.freeboard01.api.user;
 
+import com.freeboard01.api.Response;
 import com.freeboard01.domain.user.UserService;
+import com.freeboard01.util.exception.FreeBoardException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,8 +18,8 @@ public class UserApiController {
     private final UserService userService;
 
     @PostMapping
-    private ResponseEntity<Boolean> join(@RequestBody UserForm user){
-        return ResponseEntity.ok(userService.join(user));
+    private void join(@RequestBody UserForm user){
+        userService.join(user);
     }
 
     @PostMapping(params = {"type=LOGIN"})
