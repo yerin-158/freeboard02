@@ -1,6 +1,7 @@
 package com.freeboard01.domain.user;
 
 import com.freeboard01.api.user.UserForm;
+import com.freeboard01.domain.user.enums.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +22,9 @@ public class UserService {
     public Boolean join(UserForm user) {
         UserEntity userEntity = userRepository.findByAccountId(user.getAccountId());
         if(userEntity == null){
-            userRepository.save(user.convertUserEntity());
+            UserEntity newUser = user.convertUserEntity();
+            newUser.setRole(UserRole.NORMAL);
+            userRepository.save(newUser);
             return true;
         }
         return false;
