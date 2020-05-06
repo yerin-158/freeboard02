@@ -75,7 +75,7 @@ public class BoardApiControllerTest {
 
     @Test
     public void saveTest() throws Exception {
-        BoardForm boardForm = BoardForm.builder().title("제목을 입력하세요").contents("내용입니다.").password("1234").build();
+        BoardForm boardForm = BoardForm.builder().title("제목을 입력하세요").contents("내용입니다.").build();
         ObjectMapper objectMapper = new ObjectMapper();
 
         mvc.perform(post("/api/boards")

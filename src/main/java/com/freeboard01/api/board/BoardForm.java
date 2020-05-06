@@ -10,13 +10,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class BoardForm {
 
-    private String password;
     private String contents;
     private String title;
 
     @Builder
-    public BoardForm(String password, String contents, String title){
-        this.password = password;
+    public BoardForm(String contents, String title){
         this.contents = contents;
         this.title = title;
     }
