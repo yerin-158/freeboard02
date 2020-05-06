@@ -23,7 +23,7 @@ public class BoardService {
     private UserRepository userRepository;
 
     @Autowired
-    public BoardService(BoardRepository boardRepository, UserRepository userRepository){
+    public BoardService(BoardRepository boardRepository, UserRepository userRepository) {
         this.boardRepository = boardRepository;
         this.userRepository = userRepository;
     }
@@ -32,9 +32,9 @@ public class BoardService {
         return boardRepository.findAll(PageUtil.convertToZeroBasePageWithSort(pageable));
     }
 
-    public BoardEntity post(BoardForm boardForm, UserForm userForm){
+    public BoardEntity post(BoardForm boardForm, UserForm userForm) {
         UserEntity user = userRepository.findByAccountId(userForm.getAccountId());
-        if(user == null){
+        if (user == null) {
             new Exception();
         }
         return boardRepository.save(boardForm.convertBoardEntity(user));
@@ -42,12 +42,12 @@ public class BoardService {
 
     public Boolean update(BoardForm boardForm, UserForm userForm, long id) {
         UserEntity user = userRepository.findByAccountId(userForm.getAccountId());
-        if(user == null){
+        if (user == null) {
             new Exception();
         }
         BoardEntity target = boardRepository.findById(id).get();
-        if(IsWriterEqualToUserLoggedIn.confirm(target.getWriter(), user) || IsHaveAdminRoles.confirm(user)){
-            target.update(boardForm.convertBoardEntity(user));
+        if (IsWriterEqualToUserLoggedIn.confirm(target.getWriter(), user) || IsHaveAdminRoles.confirm(user)) {
+            target.update(boardForm.convertBoardEntity(target.getWriter()));
             return true;
         }
         return false;
@@ -55,11 +55,11 @@ public class BoardService {
 
     public boolean delete(long id, UserForm userForm) {
         UserEntity user = userRepository.findByAccountId(userForm.getAccountId());
-        if(user == null){
+        if (user == null) {
             new Exception();
         }
         BoardEntity target = boardRepository.findById(id).get();
-        if(IsWriterEqualToUserLoggedIn.confirm(target.getWriter(), user) || IsHaveAdminRoles.confirm(user)){
+        if (IsWriterEqualToUserLoggedIn.confirm(target.getWriter(), user) || IsHaveAdminRoles.confirm(user)) {
             boardRepository.deleteById(id);
             return true;
         }

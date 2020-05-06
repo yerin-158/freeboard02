@@ -26,6 +26,8 @@
         let nowBoardList = new Object();
         let nowBoardIndex = 0;
         let accountId = '{{accountId}}';
+        let accountRole = '{{accountRole}}';
+        const adminRole = ['ADMIN'];
         const WRITE = "Write";
         const MODIFY = "Modify";
 
@@ -82,7 +84,7 @@
         var setModifyModal = () => {
             var $modal = $('#boardModal');
             $modal.find('#saveBtn').text(MODIFY);
-            if($modal.find('#user').val() === accountId){
+            if($modal.find('#user').val() === accountId || adminRole.includes(accountRole) ){
                 $modal.find('#deleteBtn').css('display', 'block');
             }else{
                 setDisableContents($modal);
