@@ -32,7 +32,7 @@ public class BoardServiceUnitTest {
     private UserRepository mockUserRepo;
 
     @Test
-    @DisplayName("잘못된 비밀번호를 입력한 경우에는 삭제를 수행하지 않는다.")
+    @DisplayName("로그인한 유저와 글을 작성한 유저가 다를 경우 삭제를 진행하지 않는다.")
     public void delete1() {
         final Long ID = 999L;
 

@@ -4,6 +4,9 @@ import com.freeboard01.api.board.BoardForm;
 import com.freeboard01.api.user.UserForm;
 import com.freeboard01.domain.user.UserEntity;
 import com.freeboard01.domain.user.UserRepository;
+import com.freeboard01.domain.user.enums.UserRole;
+import com.freeboard01.domain.user.specification.IsHaveAdminRoles;
+import com.freeboard01.domain.user.specification.IsWriterEqualToUserLoggedIn;
 import com.freeboard01.util.PageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -42,9 +45,9 @@ public class BoardService {
         if(user == null){
             new Exception();
         }
-        BoardEntity prevEntity = boardRepository.findById(id).get();
-        if(prevEntity.getWriter().equals(user)){
-            prevEntity.update(boardForm.convertBoardEntity(user));
+        BoardEntity target = boardRepository.findById(id).get();
+        if(IsWriterEqualToUserLoggedIn.confirm(target.getWriter(), user) || IsHaveAdminRoles.confirm(user)){
+            target.update(boardForm.convertBoardEntity(user));
             return true;
         }
         return false;
@@ -55,8 +58,8 @@ public class BoardService {
         if(user == null){
             new Exception();
         }
-        BoardEntity entity = boardRepository.findById(id).get();
-        if(entity.getWriter().equals(user)){
+        BoardEntity target = boardRepository.findById(id).get();
+        if(IsWriterEqualToUserLoggedIn.confirm(target.getWriter(), user) || IsHaveAdminRoles.confirm(user)){
             boardRepository.deleteById(id);
             return true;
         }
