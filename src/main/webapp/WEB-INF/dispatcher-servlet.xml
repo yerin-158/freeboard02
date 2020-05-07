@@ -39,4 +39,6 @@
         <property name="prefix" value="/WEB-INF/view/"/>
         <property name="suffix" value=".hbs"/>
     </bean>
+
+    <bean class="com.freeboard01.util.exception.ExceptionHandler"></bean>
 </beans>
