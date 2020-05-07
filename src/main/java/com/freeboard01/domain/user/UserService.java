@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSession;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -27,8 +28,7 @@ public class UserService {
     }
 
     public void join(UserForm user) {
-        UserEntity userEntity = userRepository.findByAccountId(user.getAccountId());
-        if (userEntity != null){
+        if (userRepository.findByAccountId(user.getAccountId()) != null){
             throw new FreeBoardException(UserExceptionType.DUPLICATED_USER);
         }
         UserEntity newUser = user.convertUserEntity();
@@ -36,9 +36,14 @@ public class UserService {
         userRepository.save(newUser);
     }
 
-    public Boolean login(UserForm user) {
+    public void login(UserForm user) {
         UserEntity userEntity = userRepository.findByAccountId(user.getAccountId());
-        return userEntity != null && userEntity.getPassword().equals(user.getPassword());
+        if (userEntity == null){
+            throw new FreeBoardException(UserExceptionType.NOT_FOUND_USER);
+        }
+        if (userEntity.getPassword().equals(user.getPassword()) == false){
+            throw new FreeBoardException(UserExceptionType.WRONG_PASSWORD);
+        }
     }
 
 }

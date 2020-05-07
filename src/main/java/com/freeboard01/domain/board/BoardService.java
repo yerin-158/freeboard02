@@ -2,17 +2,21 @@ package com.freeboard01.domain.board;
 
 import com.freeboard01.api.board.BoardForm;
 import com.freeboard01.api.user.UserForm;
+import com.freeboard01.domain.board.enums.BoardExceptionType;
 import com.freeboard01.domain.user.UserEntity;
 import com.freeboard01.domain.user.UserRepository;
-import com.freeboard01.domain.user.enums.UserRole;
-import com.freeboard01.domain.user.specification.IsHaveAdminRoles;
+import com.freeboard01.domain.user.enums.UserExceptionType;
+import com.freeboard01.domain.user.specification.HaveAdminRoles;
 import com.freeboard01.domain.user.specification.IsWriterEqualToUserLoggedIn;
 import com.freeboard01.util.PageUtil;
+import com.freeboard01.util.exception.FreeBoardException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 
 @Service
@@ -33,36 +37,29 @@ public class BoardService {
     }
 
     public BoardEntity post(BoardForm boardForm, UserForm userForm) {
-        UserEntity user = userRepository.findByAccountId(userForm.getAccountId());
-        if (user == null) {
-            new Exception();
-        }
+        UserEntity user = Optional.of(userRepository.findByAccountId(userForm.getAccountId())).orElseThrow(() -> new FreeBoardException(UserExceptionType.NOT_FOUND_USER));
         return boardRepository.save(boardForm.convertBoardEntity(user));
     }
 
-    public Boolean update(BoardForm boardForm, UserForm userForm, long id) {
-        UserEntity user = userRepository.findByAccountId(userForm.getAccountId());
-        if (user == null) {
-            new Exception();
+    public void update(BoardForm boardForm, UserForm userForm, long id) {
+        UserEntity user = Optional.of(userRepository.findByAccountId(userForm.getAccountId())).orElseThrow(() -> new FreeBoardException(UserExceptionType.NOT_FOUND_USER));
+        BoardEntity target = Optional.of(boardRepository.findById(id).get()).orElseThrow(() -> new FreeBoardException(BoardExceptionType.NOT_FOUNT_CONTENTS));
+
+        if (IsWriterEqualToUserLoggedIn.confirm(target.getWriter(), user) == false && HaveAdminRoles.confirm(user) == false) {
+            throw new FreeBoardException(BoardExceptionType.NO_QUALIFICATION_USER);
         }
-        BoardEntity target = boardRepository.findById(id).get();
-        if (IsWriterEqualToUserLoggedIn.confirm(target.getWriter(), user) || IsHaveAdminRoles.confirm(user)) {
-            target.update(boardForm.convertBoardEntity(target.getWriter()));
-            return true;
-        }
-        return false;
+
+        target.update(boardForm.convertBoardEntity(target.getWriter()));
     }
 
-    public boolean delete(long id, UserForm userForm) {
-        UserEntity user = userRepository.findByAccountId(userForm.getAccountId());
-        if (user == null) {
-            new Exception();
+    public void delete(long id, UserForm userForm) {
+        UserEntity user = Optional.of(userRepository.findByAccountId(userForm.getAccountId())).orElseThrow(() -> new FreeBoardException(UserExceptionType.NOT_FOUND_USER));
+        BoardEntity target = Optional.of(boardRepository.findById(id).get()).orElseThrow(() -> new FreeBoardException(BoardExceptionType.NOT_FOUNT_CONTENTS));
+
+        if (IsWriterEqualToUserLoggedIn.confirm(target.getWriter(), user) == false && HaveAdminRoles.confirm(user) == false) {
+            throw new FreeBoardException(BoardExceptionType.NO_QUALIFICATION_USER);
         }
-        BoardEntity target = boardRepository.findById(id).get();
-        if (IsWriterEqualToUserLoggedIn.confirm(target.getWriter(), user) || IsHaveAdminRoles.confirm(user)) {
-            boardRepository.deleteById(id);
-            return true;
-        }
-        return false;
+
+        boardRepository.deleteById(id);
     }
 }

@@ -6,7 +6,7 @@ import com.freeboard01.domain.user.enums.UserRole;
 import java.util.Arrays;
 import java.util.List;
 
-public class IsHaveAdminRoles {
+public class HaveAdminRoles {
 
     static List<UserRole> upperRoleList;
 

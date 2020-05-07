@@ -4,7 +4,8 @@ import com.freeboard01.api.PageDto;
 import com.freeboard01.api.user.UserForm;
 import com.freeboard01.domain.board.BoardEntity;
 import com.freeboard01.domain.board.BoardService;
-import com.freeboard01.domain.user.UserEntity;
+import com.freeboard01.domain.user.enums.UserExceptionType;
+import com.freeboard01.util.exception.FreeBoardException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,25 +36,25 @@ public class BoardApiController {
     @PostMapping
     public ResponseEntity<BoardDto> post(@RequestBody BoardForm form){
         if(httpSession.getAttribute("USER") == null){
-            new Exception();
+            throw new FreeBoardException(UserExceptionType.LOGIN_INFORMATION_NOT_FOUND);
         }
         BoardEntity savedEntity = boardService.post(form, (UserForm) httpSession.getAttribute("USER"));
         return ResponseEntity.ok(BoardDto.of(savedEntity));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Boolean> update(@RequestBody BoardForm form, @PathVariable long id){
+    public void update(@RequestBody BoardForm form, @PathVariable long id){
         if(httpSession.getAttribute("USER") == null){
-            new Exception();
+            throw new FreeBoardException(UserExceptionType.LOGIN_INFORMATION_NOT_FOUND);
         }
-        return ResponseEntity.ok(boardService.update(form, (UserForm) httpSession.getAttribute("USER"), id));
+        boardService.update(form, (UserForm) httpSession.getAttribute("USER"), id);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Boolean> delete(@PathVariable long id){
+    public void delete(@PathVariable long id){
         if(httpSession.getAttribute("USER") == null){
-            new Exception();
+            throw new FreeBoardException(UserExceptionType.LOGIN_INFORMATION_NOT_FOUND);
         }
-        return ResponseEntity.ok(boardService.delete(id, (UserForm) httpSession.getAttribute("USER")));
+        boardService.delete(id, (UserForm) httpSession.getAttribute("USER"));
     }
 }
