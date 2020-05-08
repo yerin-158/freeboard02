@@ -151,9 +151,9 @@
                 method : 'DELETE',
                 url : 'api/boards/'+nowBoardList[nowBoardIndex].id+'?password='+password
             }).done(function (response) {
-                if(typeof response != 'undefined'){
-                    if(response == false) {
-                        alert(" 비밀 번호가 틀렸습니다. ");
+                if(typeof response == 'undefined'){
+                    if(typeof response.code == 'undefined'){
+                        alert(response.message);
                     } else {
                         $('#boardModal').modal("hide"); //닫기
                     }
@@ -183,8 +183,8 @@
                 data : JSON.stringify(boardForm)
             }).done(function (response) {
                 if(typeof response != 'undefined'){
-                    if(response == false){
-                        alert(" 비밀 번호가 틀렸습니다. ");
+                    if(typeof response.code != 'undefined'){
+                        alert(response.message);
                     }else {
                         $('#boardModal').modal("hide"); //닫기
                     }

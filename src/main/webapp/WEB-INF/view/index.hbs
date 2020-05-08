@@ -37,10 +37,10 @@
             contentType: 'application/json',
             data : JSON.stringify(account)
         }).done(function (response) {
-            if(response == true) {
+            if(typeof response != 'undefined'){
+                alert(response.message);
+            }else{
                 location.href="/freeboard01/board";
-            } else {
-                alert("로그인 정보가 바르지 않습니다.");
             }
         });
     }
