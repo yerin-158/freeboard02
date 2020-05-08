@@ -35,10 +35,10 @@
                 contentType: 'application/json',
                 data : JSON.stringify(account)
             }).done(function (response) {
-                if(response == true) {
+                if(typeof response != 'undefined'){
+                    alert(response.message);
+                }else{
                     location.href="/freeboard01/";
-                } else {
-                    alert("동일한 아이디가 존재합니다.");
                 }
             });
         }
