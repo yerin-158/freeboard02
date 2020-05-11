@@ -11,24 +11,24 @@ import javax.persistence.criteria.Root;
 
 public class BoardSpecs {
 
-    public static Specification<BoardEntity> hasContents(String keyword, SearchType type){
+    public static Specification<BoardEntity> hasContents(String keyword, SearchType type) {
         return new Specification<BoardEntity>() {
             @Override
             public Predicate toPredicate(Root<BoardEntity> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
-                if(type.equals(SearchType.ALL) || type.equals(SearchType.CONTENTS)){
-                    return criteriaBuilder.like(root.get("contents"), "%"+keyword+"%");
+                if (type.equals(SearchType.ALL) || type.equals(SearchType.CONTENTS)) {
+                    return criteriaBuilder.like(root.get("contents"), "%" + keyword + "%");
                 }
                 return null;
             }
         };
     }
 
-    public static Specification<BoardEntity> hasTitle(String keyword, SearchType type){
+    public static Specification<BoardEntity> hasTitle(String keyword, SearchType type) {
         return new Specification<BoardEntity>() {
             @Override
             public Predicate toPredicate(Root<BoardEntity> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
-                if(type.equals(SearchType.ALL) || type.equals(SearchType.TITLE)) {
-                    return criteriaBuilder.like(root.get("title"), "%"+keyword+"%");
+                if (type.equals(SearchType.ALL) || type.equals(SearchType.TITLE)) {
+                    return criteriaBuilder.like(root.get("title"), "%" + keyword + "%");
                 }
                 return null;
             }
