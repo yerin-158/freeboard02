@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freeboard01.api.user.UserForm;
 import com.freeboard01.domain.board.BoardEntity;
 import com.freeboard01.domain.board.BoardRepository;
+import com.freeboard01.domain.board.enums.SearchType;
 import com.freeboard01.domain.user.UserEntity;
 import com.freeboard01.domain.user.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -96,8 +97,7 @@ public class BoardApiControllerTest {
                 .session(mockHttpSession)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(updateForm)))
-                .andExpect(status().isOk())
-                .andExpect(content().string("true"));
+                .andExpect(status().isOk());
     }
 
     @Test
