@@ -121,5 +121,22 @@ public class BoardApiControllerTest {
                 .andExpect(content().string("true"));
     }
 
+    @Test
+    @DisplayName("게시판 검색 테스트-타이틀")
+    public void searchTest() throws Exception {
+        String keyword = "test";
+        mvc.perform(get("/api/boards?type="+SearchType.TITLE+"&keyword="+keyword)
+                .session(mockHttpSession))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("게시판 검색 테스트-글 작성자")
+    public void searchTest2() throws Exception {
+        String keyword = "yerin";
+        mvc.perform(get("/api/boards?type="+SearchType.WRITER+"&keyword="+keyword)
+                .session(mockHttpSession))
+                .andExpect(status().isOk());
+    }
 
 }
