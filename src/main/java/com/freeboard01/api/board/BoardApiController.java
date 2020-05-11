@@ -58,4 +58,15 @@ public class BoardApiController {
         }
         boardService.delete(id, (UserForm) httpSession.getAttribute("USER"));
     }
+
+    @GetMapping(params = {"type", "keyword"})
+    public ResponseEntity<PageDto<BoardDto>> search(@PageableDefault(page = 1, size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
+                                                    @RequestParam String keyword, @RequestParam SearchType type) {
+        if (httpSession.getAttribute("USER") == null) {
+            throw new FreeBoardException(UserExceptionType.LOGIN_INFORMATION_NOT_FOUND);
+        }
+        Page<BoardEntity> pageBoardList = boardService.search(pageable, keyword, type);
+        List<BoardDto> boardDtoList = pageBoardList.stream().map(boardEntity -> BoardDto.of(boardEntity)).collect(Collectors.toList());
+        return ResponseEntity.ok(PageDto.of(pageBoardList, boardDtoList));
+    }
 }
