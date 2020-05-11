@@ -67,4 +67,14 @@ public class BoardService {
 
         boardRepository.deleteById(id);
     }
+
+    public Page<BoardEntity> search(Pageable pageable, String keyword, SearchType type) {
+        if (type.equals(SearchType.WRITER)) {
+            List<UserEntity> userEntityList = userRepository.findAllByAccountIdLike("%" + keyword + "%");
+            return boardRepository.findAllByWriterIn(userEntityList, PageUtil.convertToZeroBasePageWithSort(pageable));
+        }
+        Specification<BoardEntity> spec = Specification.where(BoardSpecs.hasContents(keyword, type))
+                                                        .or(BoardSpecs.hasTitle(keyword, type));
+        return boardRepository.findAll(spec, PageUtil.convertToZeroBasePageWithSort(pageable));
+    }
 }
