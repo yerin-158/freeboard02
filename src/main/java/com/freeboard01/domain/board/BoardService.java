@@ -2,7 +2,9 @@ package com.freeboard01.domain.board;
 
 import com.freeboard01.api.board.BoardForm;
 import com.freeboard01.api.user.UserForm;
+import com.freeboard01.domain.board.entity.specs.BoardSpecs;
 import com.freeboard01.domain.board.enums.BoardExceptionType;
+import com.freeboard01.domain.board.enums.SearchType;
 import com.freeboard01.domain.user.UserEntity;
 import com.freeboard01.domain.user.UserRepository;
 import com.freeboard01.domain.user.enums.UserExceptionType;
@@ -13,9 +15,12 @@ import com.freeboard01.util.exception.FreeBoardException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -61,5 +66,15 @@ public class BoardService {
         }
 
         boardRepository.deleteById(id);
+    }
+
+    public Page<BoardEntity> search(Pageable pageable, String keyword, SearchType type) {
+        if (type.equals(SearchType.WRITER)) {
+            List<UserEntity> userEntityList = userRepository.findAllByAccountIdLike("%" + keyword + "%");
+            return boardRepository.findAllByWriterIn(userEntityList, PageUtil.convertToZeroBasePageWithSort(pageable));
+        }
+        Specification<BoardEntity> spec = Specification.where(BoardSpecs.hasContents(keyword, type))
+                                                        .or(BoardSpecs.hasTitle(keyword, type));
+        return boardRepository.findAll(spec, PageUtil.convertToZeroBasePageWithSort(pageable));
     }
 }
