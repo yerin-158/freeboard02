@@ -35,7 +35,7 @@
                 contentType: 'application/json',
                 data : JSON.stringify(account)
             }).done(function (response) {
-                if(typeof response != 'undefined'){
+                if(typeof response.message != 'undefined'){
                     alert(response.message);
                 }else{
                     location.href="/freeboard01/";
