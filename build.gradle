@@ -32,6 +32,9 @@ dependencies {
     testCompile group: 'org.assertj', name: 'assertj-core', version: '3.15.0'
     // https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
     testCompile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
+    // https://mvnrepository.com/artifact/com.github.npathai/hamcrest-optional
+    testCompile group: 'com.github.npathai', name: 'hamcrest-optional', version: '2.0.0'
+
 
 
     /***
