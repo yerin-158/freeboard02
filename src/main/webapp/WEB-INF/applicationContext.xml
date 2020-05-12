@@ -12,9 +12,20 @@
                             http://www.springframework.org/schema/tx
                             http://www.springframework.org/schema/tx/spring-tx.xsd">
 
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="configLocation" value="classpath:mybatis-config.xml"/>
+        <property name="mapperLocations" value="classpath:/mappers/*.xml"/>
+    </bean>
+
+    <bean id="boardMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface" value="com.freeboard02.domain.board.BoardMapper"/>
+        <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+    </bean>
+
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="dataSource" ref="dataSource" />
-        <property name="packagesToScan" value="com.freeboard01.domain" />
+        <property name="packagesToScan" value="com.freeboard02.domain" />
         <property name="jpaVendorAdapter">
             <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
         </property>
@@ -30,7 +41,7 @@
 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="com.mysql.cj.jdbc.Driver"/>
-        <property name="url" value="jdbc:mysql://127.0.0.1:3306/free_board?serverTimezone=UTC&amp;useSSL=false"/>
+        <property name="url" value="jdbc:mysql://127.0.0.1:3306/free_board_mybatis?serverTimezone=UTC&amp;useSSL=false"/>
         <property name="username" value="robin"/>
         <property name="password" value="robin549866pass!"/>
     </bean>
@@ -40,11 +51,11 @@
     </bean>
 
 
-    <jpa:repositories base-package="com.freeboard01.domain" />
+    <jpa:repositories base-package="com.freeboard02.domain" />
 
     <tx:annotation-driven />
 
-    <context:component-scan base-package="com.freeboard01.domain">
+    <context:component-scan base-package="com.freeboard02.domain">
         <context:include-filter type="annotation" expression="org.springframework.stereotype.Repository" />
         <context:include-filter type="annotation" expression="org.springframework.stereotype.Service" />
         <context:include-filter type="annotation" expression="org.springframework.stereotype.Component" />
