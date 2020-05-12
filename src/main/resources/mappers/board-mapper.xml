@@ -3,8 +3,35 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.freeboard02.domain.board.BoardMapper">
-    <select id="findAllBoardEntity" resultType="com.freeboard02.domain.board.BoardEntity">
+    <select id="findAllBoardEntity" resultType="boardentity">
         SELECT *
         FROM free_board_mybatis.board
     </select>
+
+    <select id="findById" resultType="boardentity">
+        SELECT *
+        FROM free_board_mybatis.board
+        WHERE id = #{id}
+    </select>
+
+    <insert id="save" parameterType="boardentity" keyProperty="id" keyColumn="id">
+        INSERT INTO free_board_mybatis.board (createdAt, updatedAt, contents, title, writerId)
+        VALUES (NOW(), NOW(), #{contents}, #{title}, #{writer.id})
+        <selectKey resultType="Long" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID() as id
+        </selectKey>
+    </insert>
+
+    <update id="updateById" parameterType="boardentity">
+        UPDATE free_board_mybatis.board
+        SET updatedAt = NOW(),
+            contents = #{contents},
+            title = #{title}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM free_board_mybatis.board
+        WHERE id = #{id}
+    </delete>
 </mapper>
