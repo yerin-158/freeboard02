@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <properties>
+        <property name="id" value="id"/>
+        <property name="createdAt" value="createdAt"/>
+        <property name="updatedAt" value="updatedAt"/>
+
+        <property name="boardEntity" value="board"/>
+        <property name="contents" value="contents"/>
+        <property name="title" value="title"/>
+        <property name="writerId" value="writerId"/>
+
+        <property name="userEntity" value="user"/>
+        <property name="accountId" value="accountId"/>
+        <property name="password" value="password"/>
+        <property name="role" value="role"/>
+    </properties>
+
+    <typeAliases>
+        <package name="com.freeboard02.domain"/>
+    </typeAliases>
+</configuration>
