@@ -6,6 +6,7 @@ import com.freeboard02.domain.board.entity.specs.BoardSpecs;
 import com.freeboard02.domain.board.enums.BoardExceptionType;
 import com.freeboard02.domain.board.enums.SearchType;
 import com.freeboard02.domain.user.UserEntity;
+import com.freeboard02.domain.user.UserMapper;
 import com.freeboard02.domain.user.UserRepository;
 import com.freeboard02.domain.user.enums.UserExceptionType;
 import com.freeboard02.domain.user.specification.HaveAdminRoles;
@@ -28,12 +29,12 @@ import java.util.Optional;
 public class BoardService {
 
     private BoardRepository boardRepository;
-    private UserRepository userRepository;
+    private UserMapper userMapper;
 
     @Autowired
-    public BoardService(BoardRepository boardRepository, UserRepository userRepository) {
+    public BoardService(BoardRepository boardRepository, UserMapper userMapper) {
         this.boardRepository = boardRepository;
-        this.userRepository = userRepository;
+        this.userMapper = userMapper;
     }
 
     public Page<BoardEntity> get(Pageable pageable) {
@@ -41,12 +42,12 @@ public class BoardService {
     }
 
     public BoardEntity post(BoardForm boardForm, UserForm userForm) {
-        UserEntity user = Optional.of(userRepository.findByAccountId(userForm.getAccountId())).orElseThrow(() -> new FreeBoardException(UserExceptionType.NOT_FOUND_USER));
+        UserEntity user = Optional.of(userMapper.findByAccountId(userForm.getAccountId())).orElseThrow(() -> new FreeBoardException(UserExceptionType.NOT_FOUND_USER));
         return boardRepository.save(boardForm.convertBoardEntity(user));
     }
 
     public void update(BoardForm boardForm, UserForm userForm, long id) {
-        UserEntity user = Optional.of(userRepository.findByAccountId(userForm.getAccountId())).orElseThrow(() -> new FreeBoardException(UserExceptionType.NOT_FOUND_USER));
+        UserEntity user = Optional.of(userMapper.findByAccountId(userForm.getAccountId())).orElseThrow(() -> new FreeBoardException(UserExceptionType.NOT_FOUND_USER));
         BoardEntity target = Optional.of(boardRepository.findById(id).get()).orElseThrow(() -> new FreeBoardException(BoardExceptionType.NOT_FOUNT_CONTENTS));
 
         if (IsWriterEqualToUserLoggedIn.confirm(target.getWriter(), user) == false && HaveAdminRoles.confirm(user) == false) {
@@ -57,7 +58,7 @@ public class BoardService {
     }
 
     public void delete(long id, UserForm userForm) {
-        UserEntity user = Optional.of(userRepository.findByAccountId(userForm.getAccountId())).orElseThrow(() -> new FreeBoardException(UserExceptionType.NOT_FOUND_USER));
+        UserEntity user = Optional.of(userMapper.findByAccountId(userForm.getAccountId())).orElseThrow(() -> new FreeBoardException(UserExceptionType.NOT_FOUND_USER));
         BoardEntity target = Optional.of(boardRepository.findById(id).get()).orElseThrow(() -> new FreeBoardException(BoardExceptionType.NOT_FOUNT_CONTENTS));
 
         if (IsWriterEqualToUserLoggedIn.confirm(target.getWriter(), user) == false && HaveAdminRoles.confirm(user) == false) {
@@ -69,7 +70,7 @@ public class BoardService {
 
     public Page<BoardEntity> search(Pageable pageable, String keyword, SearchType type) {
         if (type.equals(SearchType.WRITER)) {
-            List<UserEntity> userEntityList = userRepository.findAllByAccountIdLike("%" + keyword + "%");
+            List<UserEntity> userEntityList = userMapper.findByAccountIdLike(keyword);
             return boardRepository.findAllByWriterIn(userEntityList, PageUtil.convertToZeroBasePageWithSort(pageable));
         }
         Specification<BoardEntity> spec = Specification.where(BoardSpecs.hasContents(keyword, type))

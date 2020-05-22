@@ -22,4 +22,9 @@
         FROM free_board_mybatis.user
         WHERE accountId like CONCAT('%', #{target}, '%')
     </select>
+
+    <select id="findAll" resultType="userentity">
+        SELECT *
+        FROM free_board_mybatis.user
+    </select>
 </mapper>

@@ -12,28 +12,28 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class UserService {
 
-    private UserRepository userRepository;
+    private UserMapper userMapper;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserService(UserMapper userMapper) {
+        this.userMapper = userMapper;
     }
 
     public UserRole findUserRole(UserForm user){
-        return userRepository.findByAccountId(user.getAccountId()).getRole();
+        return userMapper.findByAccountId(user.getAccountId()).getRole();
     }
 
     public void join(UserForm user) {
-        if (userRepository.findByAccountId(user.getAccountId()) != null){
+        if (userMapper.findByAccountId(user.getAccountId()) != null){
             throw new FreeBoardException(UserExceptionType.DUPLICATED_USER);
         }
         UserEntity newUser = user.convertUserEntity();
         newUser.setRole(UserRole.NORMAL);
-        userRepository.save(newUser);
+        userMapper.save(newUser);
     }
 
     public void login(UserForm user) {
-        UserEntity userEntity = userRepository.findByAccountId(user.getAccountId());
+        UserEntity userEntity = userMapper.findByAccountId(user.getAccountId());
         if (userEntity == null){
             throw new FreeBoardException(UserExceptionType.NOT_FOUND_USER);
         }

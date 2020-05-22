@@ -11,4 +11,6 @@ public interface UserMapper {
     UserEntity findByAccountId(String accountId);
 
     List<UserEntity> findByAccountIdLike(String target);
+
+    List<UserEntity> findAll();
 }
