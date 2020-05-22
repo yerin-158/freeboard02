@@ -3,6 +3,37 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.freeboard02.domain.board.BoardMapper">
+    <select id="findAll" resultType="boardentity">
+        SELECT *
+        FROM free_board_mybatis.board
+        WHERE 1=1
+        <if test="searchType == 'ALL' || searchType == 'CONTENTS'">
+            AND contents like CONCAT('%', #{target}, '%')
+        </if>
+        <if test="searchType == 'ALL' || searchType == 'TITLE'">
+            AND title like CONCAT('%', #{target}, '%')
+        </if>
+        <if test="searchType != 'ALL' and  searchType != 'CONTENTS' and searchType != 'TITLE'">
+            AND 1=0
+        </if>
+        ORDER BY createdAt DESC
+        LIMIT #{start}, #{pageSize}
+    </select>
+
+    <select id="findAllByWriterIn" resultType="boardentity">
+        SELECT *
+        FROM free_board_mybatis.board
+        WHERE writerId IN <foreach collection="userEntityList" item="user" index='i' open="(" close=")" separator=",">#{user.id}</foreach>
+        ORDER BY createdAt DESC
+        LIMIT #{start}, #{pageSize}
+    </select>
+
+    <select id="findAllByWriterId" resultType="boardentity">
+        SELECT *
+        FROM free_board_mybatis.board
+        WHERE writerId = #{writerId}
+    </select>
+
     <select id="findAllBoardEntity" resultType="boardentity">
         SELECT *
         FROM free_board_mybatis.board

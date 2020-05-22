@@ -22,4 +22,8 @@
     <typeAliases>
         <package name="com.freeboard02.domain"/>
     </typeAliases>
+
+    <typeHandlers>
+        <typeHandler handler="com.freeboard02.util.typeHandler.UserRoleTypeHandler" javaType="com.freeboard02.domain.user.enums.UserRole" />
+    </typeHandlers>
 </configuration>
