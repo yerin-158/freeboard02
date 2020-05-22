@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.freeboard02.domain.user.UserMapper">
+    <insert id="save" parameterType="userentity" keyProperty="id" keyColumn="id">
+        INSERT INTO free_board_mybatis.user (createdAt, updatedAt, accountId, password, role)
+        VALUES (NOW(), NOW(), #{accountId}, #{password}, #{role})
+        <selectKey resultType="Long" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID() as id
+        </selectKey>
+    </insert>
+
+    <select id="findByAccountId" resultType="userentity">
+        SELECT *
+        FROM free_board_mybatis.user
+        WHERE accountId = #{accountId}
+    </select>
+
+    <select id="findByAccountIdLike" resultType="userentity">
+        SELECT *
+        FROM free_board_mybatis.user
+        WHERE accountId like CONCAT('%', #{target}, '%')
+    </select>
+</mapper>
