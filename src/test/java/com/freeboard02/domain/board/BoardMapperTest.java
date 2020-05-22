@@ -1,6 +1,7 @@
 package com.freeboard02.domain.board;
 
 import com.freeboard02.api.board.BoardForm;
+import com.freeboard02.domain.board.enums.SearchType;
 import com.freeboard02.domain.user.UserEntity;
 import com.freeboard02.domain.user.UserRepository;
 import com.github.npathai.hamcrestopt.OptionalMatchers;
@@ -8,17 +9,21 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/applicationContext.xml"})
@@ -38,6 +43,9 @@ public class BoardMapperTest {
     private UserEntity user;
 
     private BoardEntity targetBoard;
+
+    final int PAGE = 0;
+    final int SIZE = 10;
 
     @BeforeEach
     public void init() {
@@ -101,6 +109,22 @@ public class BoardMapperTest {
         BoardEntity updatedEntity = boardMapper.findById(targetBoard.getId()).get();
         assertThat(updatedEntity.getContents(), equalTo(form.getContents()));
         assertThat(updatedEntity.getTitle(), equalTo(form.getTitle()));
+    }
+
+    @Test
+    public void mapperPaging() {
+        String time = LocalDateTime.now().toString();
+        List<Long> savedEntityIds = new ArrayList<>();
+        for (int i = 0; i < 20; ++i) {
+            BoardEntity boardEntity = BoardEntity.builder().writer(user).contents(time).title("title").build();
+            boardMapper.save(boardEntity);
+            savedEntityIds.add(boardEntity.getId());
+        }
+
+        List<BoardEntity> findEntities = boardMapper.findAll(SearchType.CONTENTS.name(), time, PAGE, SIZE);
+        List<Long> findEntityIds = findEntities.stream().map(boardEntity -> boardEntity.getId()).collect(Collectors.toList());
+        assertThat(findEntities.size(), equalTo(SIZE));
+        assertThat(savedEntityIds, hasItems(findEntityIds.toArray(new Long[SIZE])));
     }
 
     private String randomString() {
