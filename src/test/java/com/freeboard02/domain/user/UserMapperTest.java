@@ -1,6 +1,8 @@
 package com.freeboard02.domain.user;
 
 
+import com.freeboard02.domain.user.enums.UserRole;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +51,22 @@ public class UserMapperTest {
 
         UserEntity findEntity = userMapper.findByAccountId(accountId);
         assertThat(userEntity.getId(), equalTo(findEntity.getId()));
+    }
+
+    @Test
+    @DisplayName("UserRole Enum이 잘 입력되는지 확인한다.")
+    public void enumTypeHandlerTest(){
+        String accountId = randomString();
+        UserEntity userEntity = UserEntity.builder()
+                .accountId(accountId)
+                .password(randomString())
+                .role(UserRole.NORMAL)
+                .build();
+        userMapper.save(userEntity);
+
+        UserEntity findEntity = userMapper.findByAccountId(accountId);
+        assertThat(userEntity.getId(), equalTo(findEntity.getId()));
+        assertThat(findEntity.getRole(), equalTo(UserRole.NORMAL));
     }
 
     @Test
