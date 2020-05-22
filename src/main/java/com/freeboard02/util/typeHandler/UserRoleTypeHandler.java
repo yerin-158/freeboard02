@@ -46,7 +46,6 @@ public class UserRoleTypeHandler<E extends Enum<E>> implements TypeHandler<UserR
             if (userRole.name().equals(role))
                 return userRole;
         }
-
-        return null;
+        throw new IllegalArgumentException("No enum constant " + type.getCanonicalName() + "." + role);
     }
 }
