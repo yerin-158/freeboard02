@@ -20,6 +20,20 @@
         LIMIT #{start}, #{pageSize}
     </select>
 
+    <select id="findAllByWriterIn" resultType="boardentity">
+        SELECT *
+        FROM free_board_mybatis.board
+        WHERE writerId IN <foreach collection="userEntityList" item="user" index='i' open="(" close=")" separator=",">#{user.id}</foreach>
+        ORDER BY createdAt DESC
+        LIMIT #{start}, #{pageSize}
+    </select>
+
+    <select id="findAllByWriterId" resultType="boardentity">
+        SELECT *
+        FROM free_board_mybatis.board
+        WHERE writerId = #{writerId}
+    </select>
+
     <select id="findAllBoardEntity" resultType="boardentity">
         SELECT *
         FROM free_board_mybatis.board
