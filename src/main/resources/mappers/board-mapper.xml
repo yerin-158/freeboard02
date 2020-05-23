@@ -3,9 +3,29 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.freeboard02.domain.board.BoardMapper">
-    <select id="findAll" resultType="boardentity">
-        SELECT *
-        FROM free_board_mybatis.board
+
+    <resultMap id="boardResultMap" type="com.freeboard02.domain.board.BoardEntity">
+        <id property="id" column="board_id" javaType="long"/>
+        <result property="title" column="title"/>
+        <result property="contents" column="contents"/>
+        <result property="createdAt" column="board_createdAt"/>
+        <result property="updatedAt" column="board_updatedAt"/>
+        <association property="writer" column="writerId" javaType="com.freeboard02.domain.user.UserEntity" resultMap="userResultMap" />
+    </resultMap>
+
+    <resultMap id="userResultMap" type="com.freeboard02.domain.user.UserEntity">
+        <id property="id" column="user_id" javaType="long"/>
+        <result property="accountId" column="accountId"/>
+        <result property="password" column="password"/>
+        <result property="role" column="role"/>
+        <result property="createdAt" column="user_createdAt"/>
+        <result property="updatedAt" column="user_updatedAt"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="boardResultMap">
+        SELECT b.id as board_id, b.createdAt as board_createdAt, b.updatedAt as board_updatedAt, contents, title, writerId,
+                 u.id as user_id, u.createdAt as user_createdAt, u.updatedAt as user_updatedAt, accountId, password, role
+        FROM free_board_mybatis.board b JOIN free_board_mybatis.user u ON (b.writerId = u.id)
         WHERE 1=1
         <if test="searchType == 'ALL' || searchType == 'CONTENTS'">
             AND contents like CONCAT('%', #{target}, '%')
@@ -16,33 +36,38 @@
         <if test="searchType != 'ALL' and  searchType != 'CONTENTS' and searchType != 'TITLE'">
             AND 1=0
         </if>
-        ORDER BY createdAt DESC
+        ORDER BY b.createdAt DESC
         LIMIT #{start}, #{pageSize}
     </select>
 
-    <select id="findAllByWriterIn" resultType="boardentity">
-        SELECT *
-        FROM free_board_mybatis.board
-        WHERE writerId IN <foreach collection="userEntityList" item="user" index='i' open="(" close=")" separator=",">#{user.id}</foreach>
-        ORDER BY createdAt DESC
+    <select id="findAllByWriterIn" resultMap="boardResultMap">
+        SELECT b.id as board_id, b.createdAt as board_createdAt, b.updatedAt as board_updatedAt, contents, title, writerId,
+                u.id as user_id, u.createdAt as user_createdAt, u.updatedAt as user_updatedAt, accountId, password, role
+        FROM free_board_mybatis.board b JOIN free_board_mybatis.user u ON (b.writerId = u.id)
+        WHERE writerId IN
+        <foreach collection="userEntityList" item="user" index='i' open="(" close=")" separator=",">#{user.id}</foreach>
+        ORDER BY b.createdAt DESC
         LIMIT #{start}, #{pageSize}
     </select>
 
-    <select id="findAllByWriterId" resultType="boardentity">
-        SELECT *
-        FROM free_board_mybatis.board
+    <select id="findAllByWriterId" resultMap="boardResultMap">
+        SELECT b.id as board_id, b.createdAt as board_createdAt, b.updatedAt as board_updatedAt, contents, title, writerId,
+                 u.id as user_id, u.createdAt as user_createdAt, u.updatedAt as user_updatedAt, accountId, password, role
+        FROM free_board_mybatis.board b JOIN free_board_mybatis.user u ON (b.writerId = u.id)
         WHERE writerId = #{writerId}
     </select>
 
-    <select id="findAllBoardEntity" resultType="boardentity">
-        SELECT *
-        FROM free_board_mybatis.board
+    <select id="findAllBoardEntity" resultMap="boardResultMap">
+        SELECT b.id as board_id, b.createdAt as board_createdAt, b.updatedAt as board_updatedAt, contents, title, writerId,
+                 u.id as user_id, u.createdAt as user_createdAt, u.updatedAt as user_updatedAt, accountId, password, role
+        FROM free_board_mybatis.board b JOIN free_board_mybatis.user u ON (b.writerId = u.id)
     </select>
 
-    <select id="findById" resultType="boardentity">
-        SELECT *
-        FROM free_board_mybatis.board
-        WHERE id = #{id}
+    <select id="findById" resultMap="boardResultMap">
+        SELECT b.id as board_id, b.createdAt as board_createdAt, b.updatedAt as board_updatedAt, contents, title, writerId,
+                u.id as user_id, u.createdAt as user_createdAt, u.updatedAt as user_updatedAt, accountId, password, role
+        FROM free_board_mybatis.board b JOIN free_board_mybatis.user u ON (b.writerId = u.id)
+        WHERE b.id = #{id}
     </select>
 
     <insert id="save" parameterType="boardentity" keyProperty="id" keyColumn="id">
