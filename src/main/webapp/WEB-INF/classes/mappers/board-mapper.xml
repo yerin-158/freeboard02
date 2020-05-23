@@ -37,13 +37,16 @@
 
     <select id="findAll" resultMap="boardResultMap">
         SELECT b.id as board_id, b.createdAt as board_createdAt, b.updatedAt as board_updatedAt, contents, title, writerId,
-                 u.id as user_id, u.createdAt as user_createdAt, u.updatedAt as user_updatedAt, accountId, password, role
+        u.id as user_id, u.createdAt as user_createdAt, u.updatedAt as user_updatedAt, accountId, password, role
         FROM free_board_mybatis.board b JOIN free_board_mybatis.user u ON (b.writerId = u.id)
         WHERE 1=1
-        <if test="searchType == 'ALL' || searchType == 'CONTENTS'">
+        <if test="searchType == 'ALL'">
+            AND (contents like CONCAT('%', #{target}, '%') OR title like CONCAT('%', #{target}, '%'))
+        </if>
+        <if test="searchType == 'CONTENTS'">
             AND contents like CONCAT('%', #{target}, '%')
         </if>
-        <if test="searchType == 'ALL' || searchType == 'TITLE'">
+        <if test="searchType == 'TITLE'">
             AND title like CONCAT('%', #{target}, '%')
         </if>
         <if test="searchType != 'ALL' and  searchType != 'CONTENTS' and searchType != 'TITLE'">
@@ -55,7 +58,7 @@
 
     <select id="findAllByWriterIn" resultMap="boardResultMap">
         SELECT b.id as board_id, b.createdAt as board_createdAt, b.updatedAt as board_updatedAt, contents, title, writerId,
-                u.id as user_id, u.createdAt as user_createdAt, u.updatedAt as user_updatedAt, accountId, password, role
+        u.id as user_id, u.createdAt as user_createdAt, u.updatedAt as user_updatedAt, accountId, password, role
         FROM free_board_mybatis.board b JOIN free_board_mybatis.user u ON (b.writerId = u.id)
         WHERE writerId IN
         <foreach collection="userEntityList" item="user" index='i' open="(" close=")" separator=",">#{user.id}</foreach>
