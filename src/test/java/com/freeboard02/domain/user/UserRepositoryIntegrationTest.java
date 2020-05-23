@@ -1,5 +1,6 @@
 package com.freeboard02.domain.user;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,6 +20,7 @@ public class UserRepositoryIntegrationTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Disabled
     @Test
     @DisplayName("유저를 추가한다.")
     public void test1(){

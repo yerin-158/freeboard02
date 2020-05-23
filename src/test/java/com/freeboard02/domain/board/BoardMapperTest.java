@@ -55,16 +55,7 @@ public class BoardMapperTest {
                 .contents(randomString())
                 .writer(user).build();
     }
-
-
-    @Test
-    public void mapperFind() {
-        List<BoardEntity> boardEntityList = boardMapper.findAllBoardEntity();
-        List<BoardEntity> boardEntityList2 = boardRepository.findAll();
-
-        assertThat(boardEntityList.size(), equalTo(boardEntityList2.size()));
-    }
-
+    
     @Test
     public void mapperInsert() {
         assertThat(targetBoard.getId(), equalTo(0L));

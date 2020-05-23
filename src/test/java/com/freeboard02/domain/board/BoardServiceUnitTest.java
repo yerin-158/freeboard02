@@ -1,9 +1,12 @@
 package com.freeboard02.domain.board;
 
 import com.freeboard02.api.user.UserForm;
+import com.freeboard02.domain.board.enums.BoardExceptionType;
 import com.freeboard02.domain.user.UserEntity;
+import com.freeboard02.domain.user.UserMapper;
 import com.freeboard02.domain.user.UserRepository;
 import com.freeboard02.domain.user.enums.UserRole;
+import com.freeboard02.util.exception.FreeBoardException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,6 +17,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
@@ -26,23 +32,27 @@ public class BoardServiceUnitTest {
     private BoardService sut;
 
     @Mock
-    private BoardRepository mockBoardRepo;
+    private BoardMapper mockBoardMapper;
 
     @Mock
-    private UserRepository mockUserRepo;
+    private UserMapper mockUserMapper;
 
-    @Test
+    @Test()
     @DisplayName("로그인한 유저와 글을 작성한 유저가 다를 경우 삭제를 진행하지 않는다.")
     public void delete1() {
         UserEntity writer = UserEntity.builder().accountId("mockUser").password("mockPass").build();
         UserForm userLoggedIn = UserForm.builder().accountId("wrongUser").password("wrongUser").build();
         BoardEntity boardEntity = BoardEntity.builder().contents("contents").title("title").writer(writer).build();
 
-        given(mockUserRepo.findByAccountId(anyString())).willReturn(userLoggedIn.convertUserEntity());
-        given(mockBoardRepo.findById(anyLong())).willReturn(Optional.of(boardEntity));
+        given(mockUserMapper.findByAccountId(anyString())).willReturn(userLoggedIn.convertUserEntity());
+        given(mockBoardMapper.findById(anyLong())).willReturn(Optional.of(boardEntity));
 
-        sut.delete(anyLong(), userLoggedIn);
-        verify(mockBoardRepo, never()).deleteById(anyLong());
+        Throwable e = assertThrows(FreeBoardException.class, () -> {
+            sut.delete(anyLong(), userLoggedIn);
+        });
+
+        assertEquals(BoardExceptionType.NO_QUALIFICATION_USER.getErrorMessage(), e.getMessage());
+        verify(mockBoardMapper, never()).deleteById(anyLong());
     }
 
     @Test
@@ -54,12 +64,12 @@ public class BoardServiceUnitTest {
         UserEntity userLoggedIn = userForm.convertUserEntity();
         BoardEntity boardEntity = BoardEntity.builder().writer(userLoggedIn).contents("contents").title("title").build();
 
-        given(mockUserRepo.findByAccountId(anyString())).willReturn(userLoggedIn);
-        given(mockBoardRepo.findById(anyLong())).willReturn(Optional.of(boardEntity));
-        doNothing().when(mockBoardRepo).deleteById(anyLong());
+        given(mockUserMapper.findByAccountId(anyString())).willReturn(userLoggedIn);
+        given(mockBoardMapper.findById(anyLong())).willReturn(Optional.of(boardEntity));
+        doNothing().when(mockBoardMapper).deleteById(anyLong());
 
         sut.delete(anyLong(), userForm);
-        verify(mockBoardRepo, times(1)).deleteById(anyLong());
+        verify(mockBoardMapper, times(1)).deleteById(anyLong());
     }
 
     @Test
@@ -72,11 +82,11 @@ public class BoardServiceUnitTest {
 
         BoardEntity boardEntity = BoardEntity.builder().writer(writer).contents("contents").title("title").build();
 
-        given(mockUserRepo.findByAccountId(anyString())).willReturn(userLoggedInEntity);
-        given(mockBoardRepo.findById(anyLong())).willReturn(Optional.of(boardEntity));
+        given(mockUserMapper.findByAccountId(anyString())).willReturn(userLoggedInEntity);
+        given(mockBoardMapper.findById(anyLong())).willReturn(Optional.of(boardEntity));
 
         sut.delete(anyLong(), userLoggedIn);
-        verify(mockBoardRepo, times(1)).deleteById(anyLong());
+        verify(mockBoardMapper, times(1)).deleteById(anyLong());
     }
 
 }
