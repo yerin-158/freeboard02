@@ -33,6 +33,7 @@ public class UserMapperTest {
         String accountId = randomString();
         UserEntity userEntity = UserEntity.builder()
                 .accountId(accountId)
+                .role(UserRole.NORMAL)
                 .password(randomString())
                 .build();
         assertThat(userEntity.getId(), equalTo(0L));
@@ -45,6 +46,7 @@ public class UserMapperTest {
         String accountId = randomString();
         UserEntity userEntity = UserEntity.builder()
                 .accountId(accountId)
+                .role(UserRole.NORMAL)
                 .password(randomString())
                 .build();
         userMapper.save(userEntity);
@@ -76,6 +78,7 @@ public class UserMapperTest {
         for (int i = 0; i < 10; ++i) {
             UserEntity userEntity = UserEntity.builder()
                     .accountId(randomString() + time)
+                    .role(UserRole.NORMAL)
                     .password(randomString())
                     .build();
             userMapper.save(userEntity);
