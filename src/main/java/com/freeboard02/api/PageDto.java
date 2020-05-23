@@ -1,8 +1,10 @@
 package com.freeboard02.api;
 
+import com.freeboard02.api.board.BoardDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -23,9 +25,9 @@ public class PageDto<T> {
         this.contents = contents;
     }
 
-    public static <T, G> PageDto of(Page<G> entities, List<T> contents) {
-        int totalPages = entities.getTotalPages();
-        int nowPage = entities.getPageable().getPageNumber() + 1;
+    public static <T> PageDto of(int totalDataSize, Pageable pageable, List<T> contents) {
+        int totalPages = (int) Math.ceil(((long) totalDataSize) / pageable.getPageSize());
+        int nowPage = pageable.getPageNumber() + 1;
         int startPage = 1 * VIEWPAGESIZE * (nowPage / VIEWPAGESIZE);
         int endPage = startPage + VIEWPAGESIZE - 1;
 
