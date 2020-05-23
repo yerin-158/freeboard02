@@ -26,7 +26,7 @@ public class PageDto<T> {
     }
 
     public static <T> PageDto of(int totalDataSize, Pageable pageable, List<T> contents) {
-        int totalPages = (int) Math.ceil(((long) totalDataSize) / pageable.getPageSize());
+        int totalPages = (int) Math.ceil(((float) totalDataSize) / pageable.getPageSize());
         int nowPage = pageable.getPageNumber() + 1;
         int startPage = 1 * VIEWPAGESIZE * (nowPage / VIEWPAGESIZE);
         int endPage = startPage + VIEWPAGESIZE - 1;
