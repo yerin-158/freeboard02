@@ -7,6 +7,7 @@ import com.freeboard02.domain.user.UserMapper;
 import com.freeboard02.domain.user.enums.UserRole;
 import com.github.npathai.hamcrestopt.OptionalMatchers;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,6 @@ import java.util.stream.Collectors;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/applicationContext.xml"})
@@ -33,9 +33,6 @@ public class BoardMapperTest {
 
     @Autowired
     private BoardMapper boardMapper;
-
-    @Autowired
-    private BoardRepository boardRepository;
 
     @Autowired
     private UserMapper userMapper;
@@ -55,7 +52,7 @@ public class BoardMapperTest {
                 .contents(randomString())
                 .writer(user).build();
     }
-    
+
     @Test
     public void mapperInsert() {
         assertThat(targetBoard.getId(), equalTo(0L));
@@ -180,6 +177,89 @@ public class BoardMapperTest {
 
         assertThat(findEntities.size(), equalTo(SIZE));
         assertThat(savedEntityIds, hasItems(findEntityIds.toArray(new Long[SIZE])));
+    }
+
+    @Test
+    @DisplayName("제목+내용으로 검색한다.")
+    public void mapperSearch() {
+        UserEntity userEntity = userMapper.findAll().get(0);
+        String time = LocalDateTime.now().toString();
+
+        List<Long> savedEntityIds = new ArrayList<>();
+        for (int i = 0; i < 20; ++i) {
+            BoardEntity boardEntity = null;
+            if (i % 2 == 0) {
+                boardEntity = BoardEntity.builder().writer(userEntity).contents(time).title("title").build();
+            } else {
+                boardEntity = BoardEntity.builder().writer(userEntity).contents("contents").title(time).build();
+            }
+            boardMapper.save(boardEntity);
+            savedEntityIds.add(boardEntity.getId());
+        }
+
+        List<BoardEntity> findEntities = boardMapper.findAll(SearchType.ALL.name(), time, PAGE, SIZE);
+        List<Long> findEntityIds = findEntities.stream().map(boardEntity -> boardEntity.getId()).collect(Collectors.toList());
+
+        assertThat(findEntities.size(), equalTo(SIZE));
+        assertThat(savedEntityIds, hasItems(findEntityIds.toArray(new Long[SIZE])));
+    }
+
+    @Test
+    @DisplayName("제목으로 검색한다.")
+    public void mapperSearch2() {
+        UserEntity titleSameUser = userMapper.findAll().get(0);
+        UserEntity contentsSameUser = userMapper.findAll().get(1);
+        String time = LocalDateTime.now().toString();
+
+        List<Long> savedEntityIds = new ArrayList<>();
+        for (int i = 0; i < 20; ++i) {
+            BoardEntity boardEntity = null;
+            if (i % 2 == 0) {
+                boardEntity = BoardEntity.builder().writer(contentsSameUser).contents(time).title("title").build();
+            } else {
+                boardEntity = BoardEntity.builder().writer(titleSameUser).contents("contents").title(time).build();
+            }
+            boardMapper.save(boardEntity);
+            savedEntityIds.add(boardEntity.getId());
+        }
+
+        List<BoardEntity> findEntities = boardMapper.findAll(SearchType.TITLE.name(), time, PAGE, SIZE);
+        List<Long> findEntityIds = findEntities.stream().map(boardEntity -> boardEntity.getId()).collect(Collectors.toList());
+        List<Long> writerIds = findEntities.stream().map(boardEntity -> boardEntity.getWriter().getId()).distinct().collect(Collectors.toList());
+
+        assertThat(findEntities.size(), equalTo(SIZE));
+        assertThat(savedEntityIds, hasItems(findEntityIds.toArray(new Long[SIZE])));
+        assertThat(writerIds.size(), equalTo(1));
+        assertThat(writerIds.get(0), equalTo(titleSameUser.getId()));
+    }
+
+    @Test
+    @DisplayName("내용으로 검색한다.")
+    public void mapperSearch3() {
+        UserEntity titleSameUser = userMapper.findAll().get(0);
+        UserEntity contentsSameUser = userMapper.findAll().get(1);
+        String time = LocalDateTime.now().toString();
+
+        List<Long> savedEntityIds = new ArrayList<>();
+        for (int i = 0; i < 20; ++i) {
+            BoardEntity boardEntity = null;
+            if (i % 2 == 0) {
+                boardEntity = BoardEntity.builder().writer(contentsSameUser).contents(time).title("title").build();
+            } else {
+                boardEntity = BoardEntity.builder().writer(titleSameUser).contents("contents").title(time).build();
+            }
+            boardMapper.save(boardEntity);
+            savedEntityIds.add(boardEntity.getId());
+        }
+
+        List<BoardEntity> findEntities = boardMapper.findAll(SearchType.CONTENTS.name(), time, PAGE, SIZE);
+        List<Long> findEntityIds = findEntities.stream().map(boardEntity -> boardEntity.getId()).collect(Collectors.toList());
+        List<Long> writerIds = findEntities.stream().map(boardEntity -> boardEntity.getWriter().getId()).distinct().collect(Collectors.toList());
+
+        assertThat(findEntities.size(), equalTo(SIZE));
+        assertThat(savedEntityIds, hasItems(findEntityIds.toArray(new Long[SIZE])));
+        assertThat(writerIds.size(), equalTo(1));
+        assertThat(writerIds.get(0), equalTo(contentsSameUser.getId()));
     }
 
     private String randomString() {

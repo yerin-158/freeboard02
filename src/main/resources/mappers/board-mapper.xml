@@ -40,10 +40,13 @@
                  u.id as user_id, u.createdAt as user_createdAt, u.updatedAt as user_updatedAt, accountId, password, role
         FROM free_board_mybatis.board b JOIN free_board_mybatis.user u ON (b.writerId = u.id)
         WHERE 1=1
-        <if test="searchType == 'ALL' || searchType == 'CONTENTS'">
+        <if test="searchType == 'ALL'">
+            AND (contents like CONCAT('%', #{target}, '%') OR title like CONCAT('%', #{target}, '%'))
+        </if>
+        <if test="searchType == 'CONTENTS'">
             AND contents like CONCAT('%', #{target}, '%')
         </if>
-        <if test="searchType == 'ALL' || searchType == 'TITLE'">
+        <if test="searchType == 'TITLE'">
             AND title like CONCAT('%', #{target}, '%')
         </if>
         <if test="searchType != 'ALL' and  searchType != 'CONTENTS' and searchType != 'TITLE'">
