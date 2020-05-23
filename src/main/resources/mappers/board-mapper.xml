@@ -22,6 +22,19 @@
         <result property="updatedAt" column="user_updatedAt"/>
     </resultMap>
 
+    <select id="findTotalSize" resultType="int">
+        SELECT COUNT(*)
+        FROM free_board_mybatis.board
+    </select>
+
+    <select id="findAllWithPaging" resultMap="boardResultMap">
+        SELECT b.id as board_id, b.createdAt as board_createdAt, b.updatedAt as board_updatedAt, contents, title, writerId,
+            u.id as user_id, u.createdAt as user_createdAt, u.updatedAt as user_updatedAt, accountId, password, role
+        FROM free_board_mybatis.board b JOIN free_board_mybatis.user u ON (b.writerId = u.id)
+        ORDER BY b.createdAt DESC
+        LIMIT #{start}, #{pageSize}
+    </select>
+
     <select id="findAll" resultMap="boardResultMap">
         SELECT b.id as board_id, b.createdAt as board_createdAt, b.updatedAt as board_updatedAt, contents, title, writerId,
                  u.id as user_id, u.createdAt as user_createdAt, u.updatedAt as user_updatedAt, accountId, password, role

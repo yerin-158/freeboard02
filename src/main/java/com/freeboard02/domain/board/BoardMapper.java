@@ -9,6 +9,8 @@ import java.util.Optional;
 
 @Mapper
 public interface BoardMapper {
+    int findTotalSize();
+
     List<BoardEntity> findAllBoardEntity();
 
     Optional<BoardEntity> findById(long id);
@@ -24,4 +26,6 @@ public interface BoardMapper {
     List<BoardEntity> findAllByWriterIn(@Param("userEntityList") List<UserEntity> userEntityList, @Param("start") int start, @Param("pageSize") int pageSize);
 
     List<BoardEntity> findAll(@Param("searchType") String searchType, @Param("target") String target, @Param("start") int start, @Param("pageSize") int pageSize);
+
+    List<BoardEntity> findAllWithPaging(@Param("start") int start, @Param("pageSize") int pageSize);
 }
