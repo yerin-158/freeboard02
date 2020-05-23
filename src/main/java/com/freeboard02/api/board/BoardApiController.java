@@ -6,9 +6,9 @@ import com.freeboard02.domain.board.BoardEntity;
 import com.freeboard02.domain.board.BoardService;
 import com.freeboard02.domain.board.enums.SearchType;
 import com.freeboard02.domain.user.enums.UserExceptionType;
+import com.freeboard02.util.PageUtil;
 import com.freeboard02.util.exception.FreeBoardException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -29,18 +29,17 @@ public class BoardApiController {
 
     @GetMapping
     public ResponseEntity<PageDto<BoardDto>> get(@PageableDefault(page = 1, size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<BoardEntity> pageBoardList = boardService.get(pageable);
+        List<BoardEntity> pageBoardList = boardService.get(PageUtil.convertToZeroBasePageWithSort(pageable));
         List<BoardDto> boardDtoList = pageBoardList.stream().map(boardEntity -> BoardDto.of(boardEntity)).collect(Collectors.toList());
-        return ResponseEntity.ok(PageDto.of(pageBoardList, boardDtoList));
+        return ResponseEntity.ok(PageDto.of(boardService.getTotalSize(), PageUtil.convertToZeroBasePageWithSort(pageable), boardDtoList));
     }
 
     @PostMapping
-    public ResponseEntity<BoardDto> post(@RequestBody BoardForm form) {
+    public void post(@RequestBody BoardForm form) {
         if (httpSession.getAttribute("USER") == null) {
             throw new FreeBoardException(UserExceptionType.LOGIN_INFORMATION_NOT_FOUND);
         }
-        BoardEntity savedEntity = boardService.post(form, (UserForm) httpSession.getAttribute("USER"));
-        return ResponseEntity.ok(BoardDto.of(savedEntity));
+        boardService.post(form, (UserForm) httpSession.getAttribute("USER"));
     }
 
     @PutMapping("/{id}")
@@ -65,8 +64,8 @@ public class BoardApiController {
         if (httpSession.getAttribute("USER") == null) {
             throw new FreeBoardException(UserExceptionType.LOGIN_INFORMATION_NOT_FOUND);
         }
-        Page<BoardEntity> pageBoardList = boardService.search(pageable, keyword, type);
+        List<BoardEntity> pageBoardList = boardService.search(PageUtil.convertToZeroBasePageWithSort(pageable), keyword, type);
         List<BoardDto> boardDtoList = pageBoardList.stream().map(boardEntity -> BoardDto.of(boardEntity)).collect(Collectors.toList());
-        return ResponseEntity.ok(PageDto.of(pageBoardList, boardDtoList));
+        return ResponseEntity.ok(PageDto.of(boardService.getTotalSize(), PageUtil.convertToZeroBasePageWithSort(pageable), boardDtoList));
     }
 }
