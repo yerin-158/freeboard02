@@ -262,6 +262,34 @@ public class BoardMapperTest {
         assertThat(writerIds.get(0), equalTo(contentsSameUser.getId()));
     }
 
+    @Test
+    @DisplayName("검색시 토탈페이지 계산을 위한 COUNT 쿼리를 수행한다.")
+    public void mapperSearch4() {
+        int insertSize = 20;
+        UserEntity userEntity = userMapper.findAll().get(0);
+        String time = LocalDateTime.now().toString();
+
+        List<Long> savedEntityIds = new ArrayList<>();
+        for (int i = 0; i < insertSize; ++i) {
+            BoardEntity boardEntity = null;
+            if (i % 2 == 0) {
+                boardEntity = BoardEntity.builder().writer(userEntity).contents(time).title("title").build();
+            } else {
+                boardEntity = BoardEntity.builder().writer(userEntity).contents("contents").title(time).build();
+            }
+            boardMapper.save(boardEntity);
+            savedEntityIds.add(boardEntity.getId());
+        }
+
+        List<BoardEntity> findEntities = boardMapper.findAll(SearchType.ALL.name(), time, PAGE, SIZE);
+        List<Long> findEntityIds = findEntities.stream().map(boardEntity -> boardEntity.getId()).collect(Collectors.toList());
+        int totalCount = boardMapper.findTotalSizeForSearch(SearchType.ALL.name(), time);
+
+        assertThat(findEntities.size(), equalTo(SIZE));
+        assertThat(savedEntityIds, hasItems(findEntityIds.toArray(new Long[SIZE])));
+        assertThat(totalCount, equalTo(insertSize));
+    }
+
     private String randomString() {
         String id = "";
         for (int i = 0; i < 20; i++) {

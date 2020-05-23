@@ -35,6 +35,24 @@
         LIMIT #{start}, #{pageSize}
     </select>
 
+    <select id="findTotalSizeForSearch" resultType="int">
+        SELECT COUNT(*)
+        FROM free_board_mybatis.board b JOIN free_board_mybatis.user u ON (b.writerId = u.id)
+        WHERE 1=1
+        <if test="searchType == 'ALL'">
+            AND (contents like CONCAT('%', #{target}, '%') OR title like CONCAT('%', #{target}, '%'))
+        </if>
+        <if test="searchType == 'CONTENTS'">
+            AND contents like CONCAT('%', #{target}, '%')
+        </if>
+        <if test="searchType == 'TITLE'">
+            AND title like CONCAT('%', #{target}, '%')
+        </if>
+        <if test="searchType != 'ALL' and  searchType != 'CONTENTS' and searchType != 'TITLE'">
+            AND 1=0
+        </if>
+    </select>
+
     <select id="findAll" resultMap="boardResultMap">
         SELECT b.id as board_id, b.createdAt as board_createdAt, b.updatedAt as board_updatedAt, contents, title, writerId,
         u.id as user_id, u.createdAt as user_createdAt, u.updatedAt as user_updatedAt, accountId, password, role
