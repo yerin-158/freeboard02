@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/applicationContext.xml"})
@@ -79,6 +80,8 @@ public class BoardMapperTest {
 
         assertThat(targetBoard.getTitle(), equalTo(entity.getTitle()));
         assertThat(targetBoard.getContents(), equalTo(entity.getContents()));
+        assertThat(entity.getWriter().getId(), equalTo(user.getId()));
+        assertThat(entity.getWriter().getRole(), equalTo(user.getRole()));
     }
 
     @Test
@@ -142,6 +145,7 @@ public class BoardMapperTest {
     public void mapperFindAllByWriterIn() {
         List<UserEntity> userEntities = userMapper.findAll();
         List<UserEntity> writers = userEntities.subList(userEntities.size() - 4, userEntities.size() - 1);
+        List<Long> writerIds = writers.stream().map(writer -> writer.getId()).collect(Collectors.toList());
 
         List<Long> savedEntityIds = new ArrayList<>();
         for (int i = 0; i < 20; ++i) {
@@ -154,9 +158,11 @@ public class BoardMapperTest {
 
         List<BoardEntity> findEntities = boardMapper.findAllByWriterIn(writers, PAGE, SIZE);
         List<Long> findEntityIds = findEntities.stream().map(boardEntity -> boardEntity.getId()).collect(Collectors.toList());
+        List<Long> findWriterIds = findEntities.stream().map(boardEntity -> boardEntity.getWriter().getId()).distinct().collect(Collectors.toList());
 
         assertThat(findEntities.size(), equalTo(SIZE));
         assertThat(savedEntityIds, hasItems(findEntityIds.toArray(new Long[SIZE])));
+        assertThat(writerIds, hasItems(findWriterIds.toArray(new Long[findWriterIds.size()])));
     }
 
     @Test
