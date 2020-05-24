@@ -32,12 +32,16 @@ public class BoardService {
         this.userMapper = userMapper;
     }
 
-    public int getTotalSize(){
+    public int getTotalSize() {
         return boardMapper.findTotalSize();
     }
 
+    public int getTotalSizeForSearch(String keyword, SearchType type) {
+        return boardMapper.findTotalSizeForSearch(type.name(), keyword);
+    }
+
     public List<BoardEntity> get(Pageable pageable) {
-        return boardMapper.findAllWithPaging(pageable.getPageNumber()*pageable.getPageSize(), pageable.getPageSize());
+        return boardMapper.findAllWithPaging(pageable.getPageNumber() * pageable.getPageSize(), pageable.getPageSize());
     }
 
     public void post(BoardForm boardForm, UserForm userForm) {
@@ -70,8 +74,8 @@ public class BoardService {
     public List<BoardEntity> search(Pageable pageable, String keyword, SearchType type) {
         if (type.equals(SearchType.WRITER)) {
             List<UserEntity> userEntityList = userMapper.findByAccountIdLike(keyword);
-            return boardMapper.findAllByWriterIn(userEntityList, pageable.getPageNumber()*pageable.getPageSize(), pageable.getPageSize());
+            return boardMapper.findAllByWriterIn(userEntityList, pageable.getPageNumber() * pageable.getPageSize(), pageable.getPageSize());
         }
-        return boardMapper.findAll(type.name(), keyword, pageable.getPageNumber()*pageable.getPageSize(), pageable.getPageSize());
+        return boardMapper.findAll(type.name(), keyword, pageable.getPageNumber() * pageable.getPageSize(), pageable.getPageSize());
     }
 }

@@ -66,6 +66,6 @@ public class BoardApiController {
         }
         List<BoardEntity> pageBoardList = boardService.search(PageUtil.convertToZeroBasePageWithSort(pageable), keyword, type);
         List<BoardDto> boardDtoList = pageBoardList.stream().map(boardEntity -> BoardDto.of(boardEntity)).collect(Collectors.toList());
-        return ResponseEntity.ok(PageDto.of(boardService.getTotalSize(), PageUtil.convertToZeroBasePageWithSort(pageable), boardDtoList));
+        return ResponseEntity.ok(PageDto.of(boardService.getTotalSizeForSearch(keyword, type), PageUtil.convertToZeroBasePageWithSort(pageable), boardDtoList));
     }
 }

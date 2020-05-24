@@ -11,6 +11,8 @@ import java.util.Optional;
 public interface BoardMapper {
     int findTotalSize();
 
+    int findTotalSizeForSearch(@Param("searchType") String searchType, @Param("target") String target);
+
     List<BoardEntity> findAllBoardEntity();
 
     Optional<BoardEntity> findById(long id);
