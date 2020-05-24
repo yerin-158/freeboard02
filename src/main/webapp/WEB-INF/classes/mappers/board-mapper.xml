@@ -74,6 +74,13 @@
         LIMIT #{start}, #{pageSize}
     </select>
 
+    <select id="findTotalSizeForWriterSearch" resultType="int" parameterType="userentity">
+        SELECT COUNT(*)
+        FROM free_board_mybatis.board
+        WHERE writerId IN
+        <foreach collection="list" item="user" index='i' open="(" close=")" separator=",">#{user.id}</foreach>
+    </select>
+
     <select id="findAllByWriterIn" resultMap="boardResultMap">
         SELECT b.id as board_id, b.createdAt as board_createdAt, b.updatedAt as board_updatedAt, contents, title, writerId,
         u.id as user_id, u.createdAt as user_createdAt, u.updatedAt as user_updatedAt, accountId, password, role

@@ -64,8 +64,6 @@ public class BoardApiController {
         if (httpSession.getAttribute("USER") == null) {
             throw new FreeBoardException(UserExceptionType.LOGIN_INFORMATION_NOT_FOUND);
         }
-        List<BoardEntity> pageBoardList = boardService.search(PageUtil.convertToZeroBasePageWithSort(pageable), keyword, type);
-        List<BoardDto> boardDtoList = pageBoardList.stream().map(boardEntity -> BoardDto.of(boardEntity)).collect(Collectors.toList());
-        return ResponseEntity.ok(PageDto.of(boardService.getTotalSizeForSearch(keyword, type), PageUtil.convertToZeroBasePageWithSort(pageable), boardDtoList));
+        return ResponseEntity.ok(boardService.search(PageUtil.convertToZeroBasePageWithSort(pageable), keyword, type));
     }
 }

@@ -13,6 +13,8 @@ public interface BoardMapper {
 
     int findTotalSizeForSearch(@Param("searchType") String searchType, @Param("target") String target);
 
+    int findTotalSizeForWriterSearch(List<UserEntity> userEntityList);
+
     List<BoardEntity> findAllBoardEntity();
 
     Optional<BoardEntity> findById(long id);
