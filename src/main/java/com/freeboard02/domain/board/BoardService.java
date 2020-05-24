@@ -1,5 +1,7 @@
 package com.freeboard02.domain.board;
 
+import com.freeboard02.api.PageDto;
+import com.freeboard02.api.board.BoardDto;
 import com.freeboard02.api.board.BoardForm;
 import com.freeboard02.api.user.UserForm;
 import com.freeboard02.domain.board.enums.BoardExceptionType;
@@ -9,14 +11,17 @@ import com.freeboard02.domain.user.UserMapper;
 import com.freeboard02.domain.user.enums.UserExceptionType;
 import com.freeboard02.domain.user.specification.HaveAdminRoles;
 import com.freeboard02.domain.user.specification.IsWriterEqualToUserLoggedIn;
+import com.freeboard02.util.PageUtil;
 import com.freeboard02.util.exception.FreeBoardException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -71,11 +76,21 @@ public class BoardService {
         boardMapper.deleteById(id);
     }
 
-    public List<BoardEntity> search(Pageable pageable, String keyword, SearchType type) {
+    public PageDto<BoardDto> search(Pageable pageable, String keyword, SearchType type) {
+        List<BoardEntity> boardEntities = new ArrayList<>();
+        int totalSize = 0;
         if (type.equals(SearchType.WRITER)) {
             List<UserEntity> userEntityList = userMapper.findByAccountIdLike(keyword);
-            return boardMapper.findAllByWriterIn(userEntityList, pageable.getPageNumber() * pageable.getPageSize(), pageable.getPageSize());
+            if (userEntityList.size() == 0){
+                return PageDto.of(0, PageUtil.convertToZeroBasePageWithSort(pageable), null);
+            }
+            boardEntities = boardMapper.findAllByWriterIn(userEntityList, pageable.getPageNumber() * pageable.getPageSize(), pageable.getPageSize());
+            totalSize = boardMapper.findTotalSizeForWriterSearch(userEntityList);
+        } else if (type.equals(SearchType.ALL) || type.equals(SearchType.CONTENTS) || type.equals(SearchType.TITLE)) {
+            boardEntities = boardMapper.findAll(type.name(), keyword, pageable.getPageNumber() * pageable.getPageSize(), pageable.getPageSize());
+            totalSize = boardMapper.findTotalSizeForSearch(type.name(), keyword);
         }
-        return boardMapper.findAll(type.name(), keyword, pageable.getPageNumber() * pageable.getPageSize(), pageable.getPageSize());
+        List<BoardDto> boardDtoList = boardEntities.stream().map(boardEntity -> BoardDto.of(boardEntity)).collect(Collectors.toList());
+        return PageDto.of(totalSize, PageUtil.convertToZeroBasePageWithSort(pageable), boardDtoList);
     }
 }
