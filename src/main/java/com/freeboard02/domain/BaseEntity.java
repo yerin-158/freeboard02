@@ -2,10 +2,8 @@ package com.freeboard02.domain;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.persistence.*;
+import javax.persistence.MappedSuperclass;
 import java.time.LocalDateTime;
 
 
@@ -13,17 +11,11 @@ import java.time.LocalDateTime;
 @MappedSuperclass
 public abstract class BaseEntity {
 
-    @Id
     @Setter
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected long id;
 
-    @CreationTimestamp
-    @Column
     protected LocalDateTime createdAt;
 
-    @UpdateTimestamp
-    @Column
     protected LocalDateTime updatedAt;
 
 }

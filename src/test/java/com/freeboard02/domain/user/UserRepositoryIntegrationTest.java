@@ -18,14 +18,14 @@ import javax.transaction.Transactional;
 public class UserRepositoryIntegrationTest {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserMapper userMapper;
 
     @Disabled
     @Test
     @DisplayName("유저를 추가한다.")
-    public void test1(){
+    public void test1() {
         UserEntity user = UserEntity.builder().accountId("testUser").password("pass123").build();
-        userRepository.save(user);
+        userMapper.save(user);
     }
 
 }

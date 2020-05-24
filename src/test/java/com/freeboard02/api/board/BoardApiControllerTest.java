@@ -8,7 +8,6 @@ import com.freeboard02.domain.board.enums.BoardExceptionType;
 import com.freeboard02.domain.board.enums.SearchType;
 import com.freeboard02.domain.user.UserEntity;
 import com.freeboard02.domain.user.UserMapper;
-import com.freeboard02.domain.user.UserRepository;
 import com.freeboard02.util.exception.FreeBoardException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

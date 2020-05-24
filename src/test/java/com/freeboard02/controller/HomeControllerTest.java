@@ -3,7 +3,7 @@ package com.freeboard02.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freeboard02.api.user.UserForm;
 import com.freeboard02.domain.user.UserEntity;
-import com.freeboard02.domain.user.UserRepository;
+import com.freeboard02.domain.user.UserMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class HomeControllerTest {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserMapper userMapper;
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -50,7 +50,7 @@ public class HomeControllerTest {
     @Test
     @DisplayName("로그아웃과 동시에 세션이 지워진다.")
     public void logoutTest1() throws Exception {
-        UserEntity userEntity = userRepository.findAll().get(0);
+        UserEntity userEntity = userMapper.findAll().get(0);
         UserForm userForm = UserForm.builder().accountId(userEntity.getAccountId()).password(userEntity.getPassword()).build();
         MockHttpSession mockHttpSession = new MockHttpSession();
         mockHttpSession.setAttribute("USER", userForm);
