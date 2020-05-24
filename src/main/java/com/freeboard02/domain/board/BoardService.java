@@ -82,7 +82,7 @@ public class BoardService {
         if (type.equals(SearchType.WRITER)) {
             List<UserEntity> userEntityList = userMapper.findByAccountIdLike(keyword);
             if (userEntityList.size() == 0){
-                return PageDto.of(0, PageUtil.convertToZeroBasePageWithSort(pageable), null);
+                return PageDto.of(0, pageable, null);
             }
             boardEntities = boardMapper.findAllByWriterIn(userEntityList, pageable.getPageNumber() * pageable.getPageSize(), pageable.getPageSize());
             totalSize = boardMapper.findTotalSizeForWriterSearch(userEntityList);
@@ -91,6 +91,6 @@ public class BoardService {
             totalSize = boardMapper.findTotalSizeForSearch(type.name(), keyword);
         }
         List<BoardDto> boardDtoList = boardEntities.stream().map(boardEntity -> BoardDto.of(boardEntity)).collect(Collectors.toList());
-        return PageDto.of(totalSize, PageUtil.convertToZeroBasePageWithSort(pageable), boardDtoList);
+        return PageDto.of(totalSize, pageable, boardDtoList);
     }
 }
