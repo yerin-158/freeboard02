@@ -6,26 +6,16 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.DynamicUpdate;
 
-import javax.persistence.*;
-
-@Entity
 @Getter
-@Table(name = "board")
 @NoArgsConstructor
-@DynamicUpdate
 public class BoardEntity extends BaseEntity {
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "writerId", nullable = false)
     private UserEntity writer;
 
     @Setter
-    @Column
     private String contents;
 
-    @Column
     private String title;
 
     @Builder

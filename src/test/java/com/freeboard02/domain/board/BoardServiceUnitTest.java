@@ -4,7 +4,6 @@ import com.freeboard02.api.user.UserForm;
 import com.freeboard02.domain.board.enums.BoardExceptionType;
 import com.freeboard02.domain.user.UserEntity;
 import com.freeboard02.domain.user.UserMapper;
-import com.freeboard02.domain.user.UserRepository;
 import com.freeboard02.domain.user.enums.UserRole;
 import com.freeboard02.util.exception.FreeBoardException;
 import org.junit.jupiter.api.DisplayName;
