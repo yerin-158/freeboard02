@@ -205,89 +205,98 @@ public class BoardMapperTest {
     }
 
     @Test
-    @DisplayName("제목으로 검색한다.")
+    @DisplayName("TITLE 타입으로 검색할 경우, 해당 키워드를 제목에 포함하고 있는 레코드만 검색해 올 수 있다.")
     public void mapperSearch2() {
-        UserEntity titleSameUser = userMapper.findAll().get(0);
-        UserEntity contentsSameUser = userMapper.findAll().get(1);
-        String time = LocalDateTime.now().toString();
+        final int INSERT_SIZE = (int) Math.random()*10;
+        final String SEARCH_KEYWORD = LocalDateTime.now().toString();
 
-        List<Long> savedEntityIds = new ArrayList<>();
+        insertSearchTitleTestData(INSERT_SIZE, SEARCH_KEYWORD);
+
+        List<BoardEntity> findEntities = boardMapper.findAll(SearchType.TITLE.name(), SEARCH_KEYWORD, PAGE, SIZE);
+
+        assertThat(findEntities.size(), equalTo(INSERT_SIZE));
+    }
+
+    private void insertSearchTitleTestData(final int INSERT_SIZE, final String SEARCH_KEYWORD) {
         for (int i = 0; i < 20; ++i) {
             BoardEntity boardEntity = null;
-            if (i % 2 == 0) {
-                boardEntity = BoardEntity.builder().writer(contentsSameUser).contents(time).title("title").build();
+            if (i < INSERT_SIZE) {
+                boardEntity = BoardEntity.builder().writer(user).contents("contents").title(SEARCH_KEYWORD).build();
             } else {
-                boardEntity = BoardEntity.builder().writer(titleSameUser).contents("contents").title(time).build();
+                boardEntity = BoardEntity.builder().writer(user).contents(SEARCH_KEYWORD).title("title").build();
             }
             boardMapper.save(boardEntity);
-            savedEntityIds.add(boardEntity.getId());
         }
-
-        List<BoardEntity> findEntities = boardMapper.findAll(SearchType.TITLE.name(), time, PAGE, SIZE);
-        List<Long> findEntityIds = findEntities.stream().map(boardEntity -> boardEntity.getId()).collect(Collectors.toList());
-        List<Long> writerIds = findEntities.stream().map(boardEntity -> boardEntity.getWriter().getId()).distinct().collect(Collectors.toList());
-
-        assertThat(findEntities.size(), equalTo(SIZE));
-        assertThat(savedEntityIds, hasItems(findEntityIds.toArray(new Long[SIZE])));
-        assertThat(writerIds.size(), equalTo(1));
-        assertThat(writerIds.get(0), equalTo(titleSameUser.getId()));
     }
 
     @Test
-    @DisplayName("내용으로 검색한다.")
+    @DisplayName("CONTENTS 타입으로 검색할 경우, 해당 키워드를 내용에 포함하고 있는 레코드만 검색해 올 수 있다.")
     public void mapperSearch3() {
-        UserEntity titleSameUser = userMapper.findAll().get(0);
-        UserEntity contentsSameUser = userMapper.findAll().get(1);
-        String time = LocalDateTime.now().toString();
+        final int INSERT_SIZE = (int) Math.random()*10;
+        final String SEARCH_KEYWORD = LocalDateTime.now().toString();
 
-        List<Long> savedEntityIds = new ArrayList<>();
+        insertSearchContentsTestData(INSERT_SIZE, SEARCH_KEYWORD);
+
+        List<BoardEntity> findEntities = boardMapper.findAll(SearchType.CONTENTS.name(), SEARCH_KEYWORD, PAGE, SIZE);
+
+        assertThat(findEntities.size(), equalTo(INSERT_SIZE));
+    }
+
+    private void insertSearchContentsTestData(final int INSERT_SIZE, final String SEARCH_KEYWORD) {
         for (int i = 0; i < 20; ++i) {
             BoardEntity boardEntity = null;
-            if (i % 2 == 0) {
-                boardEntity = BoardEntity.builder().writer(contentsSameUser).contents(time).title("title").build();
+            if (i < INSERT_SIZE) {
+                boardEntity = BoardEntity.builder().writer(user).contents(SEARCH_KEYWORD).title("title").build();
             } else {
-                boardEntity = BoardEntity.builder().writer(titleSameUser).contents("contents").title(time).build();
+                boardEntity = BoardEntity.builder().writer(user).contents("contents").title(SEARCH_KEYWORD).build();
             }
             boardMapper.save(boardEntity);
-            savedEntityIds.add(boardEntity.getId());
         }
-
-        List<BoardEntity> findEntities = boardMapper.findAll(SearchType.CONTENTS.name(), time, PAGE, SIZE);
-        List<Long> findEntityIds = findEntities.stream().map(boardEntity -> boardEntity.getId()).collect(Collectors.toList());
-        List<Long> writerIds = findEntities.stream().map(boardEntity -> boardEntity.getWriter().getId()).distinct().collect(Collectors.toList());
-
-        assertThat(findEntities.size(), equalTo(SIZE));
-        assertThat(savedEntityIds, hasItems(findEntityIds.toArray(new Long[SIZE])));
-        assertThat(writerIds.size(), equalTo(1));
-        assertThat(writerIds.get(0), equalTo(contentsSameUser.getId()));
     }
 
     @Test
-    @DisplayName("검색시 토탈페이지 계산을 위한 COUNT 쿼리를 수행한다.")
-    public void mapperSearch4() {
-        int insertSize = 20;
-        UserEntity userEntity = userMapper.findAll().get(0);
-        String time = LocalDateTime.now().toString();
+    @DisplayName("검색할 경우 페이징 처리가 잘 되는지 확인한다.")
+    public void mapperSearch5() {
+        final String SEARCH_KEYWORD = LocalDateTime.now().toString();
+        insertTestDataForPaging(SEARCH_KEYWORD);
 
+        List<BoardEntity> findEntities = boardMapper.findAll(SearchType.CONTENTS.name(), SEARCH_KEYWORD, PAGE, SIZE);
+
+        assertThat(findEntities.size(), equalTo(SIZE));
+    }
+
+    private void insertTestDataForPaging(final String SEARCH_KEYWORD) {
+        final int INSERT_SIZE = 10 + (int)(Math.random()*(50 - 10 + 1));
+
+        for (int i = 0; i < INSERT_SIZE; ++i) {
+            boardMapper.save(BoardEntity.builder().writer(user).contents(SEARCH_KEYWORD).title("title").build());
+        }
+    }
+
+    @Test
+    @DisplayName("ALL 타입으로 검색할 경우, count 함수를 이용하여 제목이나 내용에 해당 키워드를 가진 레코드의 총 개수를 가져올 수 있다.")
+    public void mapperSearch4() {
+        final int INSERT_SIZE = (int) Math.random()*10;;
+        final String SEARCH_KEYWORD = LocalDateTime.now().toString();
+        insertSearchCountingTestData(INSERT_SIZE, SEARCH_KEYWORD);
+
+        int totalCount = boardMapper.findTotalSizeForSearch(SearchType.ALL.name(), SEARCH_KEYWORD);
+
+        assertThat(totalCount, equalTo(INSERT_SIZE));
+    }
+
+    private void insertSearchCountingTestData(final int INSERT_SIZE, final String SEARCH_KEYWORD) {
         List<Long> savedEntityIds = new ArrayList<>();
-        for (int i = 0; i < insertSize; ++i) {
+        for (int i = 0; i < INSERT_SIZE; ++i) {
             BoardEntity boardEntity = null;
             if (i % 2 == 0) {
-                boardEntity = BoardEntity.builder().writer(userEntity).contents(time).title("title").build();
+                boardEntity = BoardEntity.builder().writer(user).contents(SEARCH_KEYWORD).title("title").build();
             } else {
-                boardEntity = BoardEntity.builder().writer(userEntity).contents("contents").title(time).build();
+                boardEntity = BoardEntity.builder().writer(user).contents("contents").title(SEARCH_KEYWORD).build();
             }
             boardMapper.save(boardEntity);
             savedEntityIds.add(boardEntity.getId());
         }
-
-        List<BoardEntity> findEntities = boardMapper.findAll(SearchType.ALL.name(), time, PAGE, SIZE);
-        List<Long> findEntityIds = findEntities.stream().map(boardEntity -> boardEntity.getId()).collect(Collectors.toList());
-        int totalCount = boardMapper.findTotalSizeForSearch(SearchType.ALL.name(), time);
-
-        assertThat(findEntities.size(), equalTo(SIZE));
-        assertThat(savedEntityIds, hasItems(findEntityIds.toArray(new Long[SIZE])));
-        assertThat(totalCount, equalTo(insertSize));
     }
 
     private String randomString() {
