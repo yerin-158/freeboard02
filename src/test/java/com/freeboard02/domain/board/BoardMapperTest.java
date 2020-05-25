@@ -243,42 +243,6 @@ public class BoardMapperTest {
         }
     }
 
-    private void insertSearchAllTestData(int INSERT_SIZE, String SEARCH_KEYWORD) {
-        for (int i = 0; i < INSERT_SIZE; ++i) {
-            BoardEntity boardEntity = null;
-            if (i % 2 == 0) {
-                boardEntity = BoardEntity.builder().writer(user).contents(SEARCH_KEYWORD).title("title").build();
-            } else {
-                boardEntity = BoardEntity.builder().writer(user).contents("contents").title(SEARCH_KEYWORD).build();
-            }
-            boardMapper.save(boardEntity);
-        }
-    }
-
-    private void insertSearchTitleTestData(final int INSERT_SIZE, final String SEARCH_KEYWORD) {
-        for (int i = 0; i < 20; ++i) {
-            BoardEntity boardEntity = null;
-            if (i < INSERT_SIZE) {
-                boardEntity = BoardEntity.builder().writer(user).contents("contents").title(SEARCH_KEYWORD).build();
-            } else {
-                boardEntity = BoardEntity.builder().writer(user).contents(SEARCH_KEYWORD).title("title").build();
-            }
-            boardMapper.save(boardEntity);
-        }
-    }
-
-    private void insertSearchContentsTestData(final int INSERT_SIZE, final String SEARCH_KEYWORD) {
-        for (int i = 0; i < 20; ++i) {
-            BoardEntity boardEntity = null;
-            if (i < INSERT_SIZE) {
-                boardEntity = BoardEntity.builder().writer(user).contents(SEARCH_KEYWORD).title("title").build();
-            } else {
-                boardEntity = BoardEntity.builder().writer(user).contents("contents").title(SEARCH_KEYWORD).build();
-            }
-            boardMapper.save(boardEntity);
-        }
-    }
-
     @Test
     @DisplayName("검색할 경우 페이징 처리가 잘 되는지 확인한다.")
     public void mapperSearch5() {
